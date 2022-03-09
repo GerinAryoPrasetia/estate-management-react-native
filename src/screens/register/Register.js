@@ -30,18 +30,11 @@ const Register = ({navigation}) => {
   const [userId, setUserId] = useState('');
 
   useEffect(() => {
-    function getRandomString(length) {
-      var randomChars =
-        'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-      var result = '';
-      for (var i = 0; i < length; i++) {
-        result += randomChars.charAt(
-          Math.floor(Math.random() * randomChars.length),
-        );
-      }
-      return result;
+    async function readValue() {
+      const v = await AsyncStorage.getItem('@token');
+      return v;
     }
-    setDeviceToken(getRandomString(10));
+    setDeviceToken(readValue());
     // console.log(getRandomString(20));
   }, []);
 
@@ -71,7 +64,7 @@ const Register = ({navigation}) => {
         email: email,
         password: password,
         nama: name,
-        device_token: deviceToken,
+        device_token: deviceToken._W,
       }),
     };
     fetch('https://estate.sonajaya.com/api/register', requestOption)

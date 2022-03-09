@@ -22,31 +22,11 @@ const Login = ({navigation}) => {
   const [userId, setUserId] = useState('');
   const [deviceTokenStorage, setDeviceTokenStorage] = useState('');
   useEffect(() => {
-    function getRandomString(length) {
-      var randomChars =
-        'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-      var result = '';
-      for (var i = 0; i < length; i++) {
-        result += randomChars.charAt(
-          Math.floor(Math.random() * randomChars.length),
-        );
-      }
-      return result;
+    async function readValue() {
+      const token = await AsyncStorage.getItem('@token');
+      return token;
     }
-    setDeviceToken(getRandomString(20));
-    const getToken = async () => {
-      try {
-        const value = await AsyncStorage.getItem('@device_token');
-        if (value !== null) {
-          // value previously stored
-          console.log('device storage HOMEPAGE', value);
-          setDeviceTokenStorage(value);
-        }
-      } catch (e) {
-        console.log(e);
-      }
-    };
-    getToken();
+    setDeviceToken(readValue());
   }, []);
 
   // const storeToken = async token => {
@@ -75,10 +55,10 @@ const Login = ({navigation}) => {
       body: JSON.stringify({
         email: email,
         password: password,
-        device_token: deviceToken,
+        device_token: deviceToken._W,
       }),
     };
-    fetch('https://estate.sonajaya.com/api/login', reqOption)
+    fetch('https://estate.royalsaranateknologi.com/api/login', reqOption)
       .then(response => response.json())
       .then(data => {
         // console.log('ini response ', responseJson);
