@@ -5,6 +5,10 @@ import {
   StyleSheet,
   TextInput,
   TouchableOpacity,
+  Modal,
+  Alert,
+  Pressable,
+  ActivityIndicator,
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
@@ -12,10 +16,13 @@ const AmbilSampah = () => {
   const [userId, setUserId] = useState('');
   const [bearer, setBearer] = useState('');
   const [alamat, setAlamat] = useState('');
+  const [modalVisible, setModalVisible] = useState(false);
+  const [isLoading, setIsloading] = useState(false);
+
   useEffect(() => {
     const getData = async () => {
       try {
-        const value = await AsyncStorage.getItem('@storage_Key');
+        const value = await AsyncStorage.getItem('@storage_bearer');
         if (value !== null) {
           // value previously stored
           console.log('sync storage komplain bearer', value);
@@ -42,20 +49,28 @@ const AmbilSampah = () => {
   }, [userId]);
 
   const handleSubmit = async () => {
+    setIsloading(true);
     try {
-      const response = await fetch('https://estate.sonajaya.com/api/sampah', {
-        method: 'POST',
-        headers: {
-          Authorization: `Bearer ${bearer}`,
-          'Content-Type': 'application/json',
+      const response = await fetch(
+        'https://estate.royalsaranateknologi.com/api/sampah',
+        {
+          method: 'POST',
+          headers: {
+            Authorization: `Bearer ${bearer}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            user_id: userId,
+            alamat: alamat,
+          }),
         },
-        body: JSON.stringify({
-          user_id: userId,
-          alamat: alamat,
-        }),
-      });
+      );
       const responseJson = await response.json();
       console.log(responseJson);
+      if (responseJson.status === 'success') {
+        setModalVisible(true);
+        setIsloading(false);
+      }
     } catch (e) {
       console.log(e);
     }
@@ -65,6 +80,28 @@ const AmbilSampah = () => {
   };
   return (
     <View style={styles.container}>
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={modalVisible}
+        onRequestClose={() => {
+          Alert.alert('Modal has been closed.');
+          setModalVisible(!modalVisible);
+        }}>
+        <View style={styles.centeredView}>
+          <View style={styles.modalView}>
+            <Text style={styles.modalText}>
+              Request Pengambilan Berhasil Dikirim
+            </Text>
+            {/* <Ionicons name="check" /> */}
+            <Pressable
+              style={[styles.button, styles.buttonClose]}
+              onPress={() => setModalVisible(!modalVisible)}>
+              <Text style={styles.textStyle}>Tutup</Text>
+            </Pressable>
+          </View>
+        </View>
+      </Modal>
       <Text style={styles.title}>Alamat Unit</Text>
       <View style={styles.inputView}>
         <TextInput
@@ -80,7 +117,11 @@ const AmbilSampah = () => {
         />
       </View>
       <TouchableOpacity style={styles.reqBtn} onPress={handleSubmit}>
-        <Text style={{color: 'white'}}>Submit</Text>
+        {isLoading ? (
+          <ActivityIndicator color={'#fff'} />
+        ) : (
+          <Text style={{color: 'white'}}>Submit</Text>
+        )}
       </TouchableOpacity>
     </View>
   );
@@ -126,5 +167,53 @@ const styles = StyleSheet.create({
     width: '80%',
     marginBottom: 20,
     paddingLeft: 10,
+  },
+  centeredView: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: 22,
+  },
+  modalView: {
+    margin: 20,
+    backgroundColor: 'white',
+    borderRadius: 20,
+    padding: 35,
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
+  },
+  button: {
+    borderRadius: 20,
+    padding: 10,
+    elevation: 2,
+    width: 150,
+    marginTop: 10,
+  },
+  buttonOpen: {
+    backgroundColor: '#F194FF',
+  },
+  buttonClose: {
+    backgroundColor: 'white',
+    borderWidth: 1,
+    borderColor: 'red',
+  },
+  textStyle: {
+    color: 'black',
+    fontWeight: 'bold',
+    textAlign: 'center',
+  },
+  modalText: {
+    marginBottom: 15,
+    textAlign: 'center',
+    fontWeight: '700',
+    color: 'black',
+    fontSize: 20,
   },
 });

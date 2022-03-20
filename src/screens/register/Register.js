@@ -9,6 +9,7 @@ import {
   TextInput,
   Button,
   TouchableOpacity,
+  ActivityIndicator,
 } from 'react-native';
 import LoginImage from '../../../assets/img/login.png';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -38,18 +39,17 @@ const Register = ({navigation}) => {
     // console.log(getRandomString(20));
   }, []);
 
-  const storeToken = async token => {
+  const storeBearer = async bearer => {
     try {
-      await AsyncStorage.setItem('@storage_Key', token);
-      console.log('token store' + token);
+      await AsyncStorage.setItem('@storage_bearer', bearer);
+      console.log('bearer store' + bearer);
     } catch (e) {
       console.log(e);
     }
   };
-
   const storeId = async id => {
     try {
-      await AsyncStorage.setItem('@storage_id', id);
+      await AsyncStorage.setItem('@user_id', id);
       console.log('id store' + id);
     } catch (e) {
       console.log(e);
@@ -57,6 +57,7 @@ const Register = ({navigation}) => {
   };
 
   const handleSubmit = () => {
+    setIsLoading(true);
     const requestOption = {
       method: 'POST',
       headers: {'Content-Type': 'application/json'},
@@ -67,7 +68,7 @@ const Register = ({navigation}) => {
         device_token: deviceToken._W,
       }),
     };
-    fetch('https://estate.sonajaya.com/api/register', requestOption)
+    fetch('https://estate.royalsaranateknologi.com/api/register', requestOption)
       .then(response => response.json())
       .then(responseJson => {
         // console.log('ini response ', responseJson);
@@ -80,21 +81,22 @@ const Register = ({navigation}) => {
         const storageId = responseJson.data.id;
         setBearerToken(storageToken);
         setUserId(storageId);
-        storeToken(storageToken);
+        storeBearer(storageToken);
         storeId(storageId);
 
         if (responseJson.status === 'sukses') {
           setIsRegistraionSuccess(true);
           // setBearerToken(bearer_token);
           // console.log(bearerToken + ' bearer token');
-          navigation.navigate('HomeTab', {name: name});
+          setIsLoading(false);
+          navigation.navigate('HomeTab');
         } else {
           setErrorText(responseJson.msg);
           console.log(errorText + 'error text');
         }
       })
       .catch(error => {
-        console.error(error);
+        console.error('error regist', error);
       });
   };
 
@@ -123,6 +125,7 @@ const Register = ({navigation}) => {
         <Text style={styles.title}>Create an Account</Text>
         <View style={styles.inputView}>
           <TextInput
+            autoCapitalize={'characters'}
             placeholder="Nama"
             style={styles.textInput}
             placeholderTextColor="#666"
@@ -150,7 +153,11 @@ const Register = ({navigation}) => {
           <Text style={styles.loginBtn}>Have an Account?</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.registerBtn} onPress={handleSubmit}>
-          <Text style={styles.loginText}>Register</Text>
+          {isLoading ? (
+            <ActivityIndicator color={'#fff'} />
+          ) : (
+            <Text style={styles.loginText}>Register</Text>
+          )}
         </TouchableOpacity>
       </View>
     </View>

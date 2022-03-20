@@ -9,6 +9,7 @@ import {
   TouchableOpacity,
   TextInput,
   KeyboardAvoidingView,
+  ActivityIndicator,
 } from 'react-native';
 import LoginImg from '../../../assets/img/loginImg.png';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -21,31 +22,36 @@ const Login = ({navigation}) => {
   const [bearerToken, setBearerToken] = useState('');
   const [userId, setUserId] = useState('');
   const [deviceTokenStorage, setDeviceTokenStorage] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  const [tokenLogin, setTokenLogin] = useState('');
   useEffect(() => {
     async function readValue() {
       const token = await AsyncStorage.getItem('@token');
+
       return token;
     }
+    console.log(readValue());
     setDeviceToken(readValue());
   }, []);
 
-  // const storeToken = async token => {
-  //   try {
-  //     await AsyncStorage.setItem('@storage_Key', token);
-  //     console.log('token store' + token);
-  //   } catch (e) {
-  //     console.log(e);
-  //   }
-  // };
-  const storeId = async user_id => {
+  const storeBearer = async bearer => {
     try {
-      await AsyncStorage.setItem('@user_id', user_id);
-      console.log('id store' + user_id);
+      await AsyncStorage.setItem('@storage_bearer', bearer);
+      console.log('bearer store' + bearer);
+    } catch (e) {
+      console.log(e);
+    }
+  };
+  const storeTokenLogin = async login_token => {
+    try {
+      await AsyncStorage.setItem('@user_id', login_token);
+      console.log('id store' + login_token);
     } catch (e) {
       console.log(e);
     }
   };
   const handleSubmit = () => {
+    setIsLoading(true);
     const reqOption = {
       method: 'POST',
       headers: {
@@ -68,12 +74,15 @@ const Login = ({navigation}) => {
         // AsyncStorage.setItem('@storage_Key', bearerToken);
 
         const storageToken = data.access_token;
-        setBearerToken(storageToken);
+        // storeBearer(storageToken);
         // storeToken(storageToken);
         // storeId(data.user_id);
         console.log('bearer token', bearerToken);
+        storeTokenLogin(data.access_token);
         console.log(storageToken);
         if (data.message === 'sukses') {
+          setIsLoading(false);
+          storeBearer(storageToken);
           navigation.navigate('HomeTab');
         } else {
           setErrorText(data.msg);
@@ -89,8 +98,10 @@ const Login = ({navigation}) => {
   const onChangePassword = e => {
     setPassword(e);
   };
+
   return (
     <View style={styles.container}>
+      <ActivityIndicator color={'#fff'} />
       <SafeAreaView />
       <View style={styles.imgContainer}>
         <Image source={LoginImg} style={styles.LoginImg} />
@@ -118,7 +129,11 @@ const Login = ({navigation}) => {
           <Text style={styles.loginBtn}>Forgot Password?</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.registerBtn} onPress={handleSubmit}>
-          <Text style={styles.loginText}>Login</Text>
+          {isLoading ? (
+            <ActivityIndicator color={'#fff'} />
+          ) : (
+            <Text style={styles.loginText}>Register</Text>
+          )}
         </TouchableOpacity>
         <TouchableOpacity onPress={() => navigation.navigate('Register')}>
           <Text style={styles.loginBtn}>Create Account</Text>

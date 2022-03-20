@@ -45,6 +45,14 @@ const Home = ({route, navigation}) => {
     //     console.log(e);
     //   }
     // };
+    const getTokenLogin = async () => {
+      try {
+        const value = await AsyncStorage.getItem('@user_id');
+        console.log('userid HOME', value);
+      } catch (e) {
+        console.log(e);
+      }
+    };
     const storeId = async user_id => {
       try {
         await AsyncStorage.setItem('@user_id', user_id);
@@ -53,27 +61,31 @@ const Home = ({route, navigation}) => {
         console.log(e);
       }
     };
-    const getToken = async () => {
+    const getBearer = async () => {
       try {
-        const value = await AsyncStorage.getItem('@storage_Key');
+        const value = await AsyncStorage.getItem('@storage_bearer');
         if (value !== null) {
           // value previously stored
-          console.log('sync storage HOMEPAGE', value);
+          console.log('bearer storage HOMEPAGE', value);
           setBearer(value);
         }
       } catch (e) {
         console.log(e);
       }
     };
-    getToken();
+    getBearer();
     const getUserData = async () => {
       try {
-        const response = await fetch('https://estate.sonajaya.com/api/user', {
-          headers: {
-            Authorization: `Bearer ${bearer}`,
-            'Content-Type': 'application/json',
+        const response = await fetch(
+          'https://estate.royalsaranateknologi.com/api/user',
+          {
+            method: 'GET',
+            headers: {
+              Authorization: `Bearer ${bearer}`,
+              'Content-Type': 'application/json',
+            },
           },
-        });
+        );
         const responseJson = await response.json();
         console.log('Home', responseJson);
         if (responseJson.status === 'success') {
@@ -86,8 +98,9 @@ const Home = ({route, navigation}) => {
       }
     };
     getUserData();
+    getTokenLogin();
     console.log(userId);
-  }, [bearer, data]);
+  }, [bearer, data, userId]);
 
   return (
     <View style={styles.container}>

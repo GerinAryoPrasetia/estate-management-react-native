@@ -30,9 +30,9 @@ const BayarAir = ({navigation}) => {
   useEffect(() => {
     const getData = async () => {
       try {
-        const value = await AsyncStorage.getItem('@storage_Key');
+        const value = await AsyncStorage.getItem('@storage_bearer');
         // console.log('masuk getData');
-        if (value !== null) {
+        if (value !== null || value !== undefined) {
           // value previously stored
           console.log('sync storage pdam', value);
           setBearer(value);
@@ -57,11 +57,12 @@ const BayarAir = ({navigation}) => {
     const fetchData = async () => {
       try {
         const response = await fetch(
-          'https://estate.sonajaya.com/api/pdam-list',
+          'https://estate.royalsaranateknologi.com/api/pdam-list',
           {
             method: 'GET',
             headers: {
               Authorization: `Bearer ${bearer}`,
+              Accept: 'application/json',
               'Content-Type': 'application/json',
             },
           },
@@ -84,7 +85,7 @@ const BayarAir = ({navigation}) => {
     getData();
     getDataId();
     fetchData();
-  }, [userId]);
+  }, [userId, bearer, pdam]);
   const onChange = e => {
     setIdPelanggan(e);
     setMissingId(false);

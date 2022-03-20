@@ -21,38 +21,41 @@ const News = () => {
       console.log(e);
     }
   };
-  useEffect(() => {
-    const getToken = async () => {
-      try {
-        const value = await AsyncStorage.getItem('@storage_Key');
-        if (value !== null) {
-          // value previously stored
-          // console.log('sync storage news', value);
-          setBearer(value);
-          console.log('bearer News', bearer);
-        }
-      } catch (e) {
-        console.log(e);
+  const getToken = async () => {
+    try {
+      const value = await AsyncStorage.getItem('@storage_bearer');
+      if (value !== null) {
+        // value previously stored
+        // console.log('sync storage news', value);
+        setBearer(value);
+        console.log('bearer News', bearer);
       }
-    };
+    } catch (e) {
+      console.log(e);
+    }
+  };
+  useEffect(() => {
+    getToken();
     const getNews = async () => {
       try {
-        const response = await fetch('https://estate.sonajaya.com/api/berita', {
-          method: 'GET',
-          headers: {
-            Authorization: `Bearer ${bearer}`,
-            'Content-Type': 'application/json',
+        const response = await fetch(
+          'https://estate.royalsaranateknologi.com/api/berita',
+          {
+            method: 'GET',
+            headers: {
+              Authorization: `Bearer ${bearer}`,
+              'Content-Type': 'application/json',
+            },
           },
-        });
+        );
         const responseJson = await response.json();
         setNews(responseJson);
       } catch (e) {
         console.log(e);
       }
     };
-    getToken();
     getNews();
-  }, [bearer]);
+  }, [getToken, bearer]);
   console.log(news);
   return (
     <View style={styles.container}>

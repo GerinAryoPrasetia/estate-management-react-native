@@ -145,6 +145,7 @@ const Hafalan = () => {
       setrecordSecs(e.currentPosition);
     });
     console.log(`uri: ${uri}`);
+    console.log('URI', uri);
   };
   const onStopRecord = async () => {
     const result = await audioRecorderPlayer.stopRecorder();

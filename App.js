@@ -82,7 +82,7 @@ export class App extends Component {
   }
 
   render() {
-    console.log(this.token);
+    console.log('TOKEN: ', this.token);
     return <Index token={this.token} />;
   }
 }

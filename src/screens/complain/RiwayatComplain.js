@@ -8,29 +8,37 @@ const RiwayatComplain = () => {
   const [userId, setUserId] = useState('');
 
   useEffect(() => {
-    const getJenisKeluhan = async () => {
-      const response = await fetch('https://estate.sonajaya.com/api/keluhan', {
-        headers: {
-          Authorization: `Bearer ${bearer}`,
-          'Content-type': 'aplication/json',
+    const getKeluhan = async () => {
+      const response = await fetch(
+        'https://estate.royalsaranateknologi.com/api/keluhan',
+        {
+          method: 'GET',
+          headers: {
+            Authorization: `Bearer ${bearer}`,
+            'Content-type': 'aplication/json',
+          },
         },
-      });
+      );
       const responseJson = await response.json();
-      // console.log(responseJson);
+      console.log(responseJson);
       if (responseJson !== null) {
         setKeluhan(responseJson.data);
       }
     };
+    getKeluhan();
+  }, [keluhan, bearer]);
+
+  useEffect(() => {
     const getData = async () => {
       try {
-        const value = await AsyncStorage.getItem('@storage_Key');
+        const value = await AsyncStorage.getItem('@storage_bearer');
         if (value !== null) {
           // value previously stored
-          // console.log('sync storage komplain bearer', value);
+          console.log('sync storage komplain bearer', value);
           setBearer(value);
         }
       } catch (e) {
-        console.log(e);
+        console.log('riwayat komplain error', e);
       }
     };
     const getDataId = async () => {
@@ -42,13 +50,13 @@ const RiwayatComplain = () => {
           setUserId(id);
         }
       } catch (e) {
-        console.log(e);
+        console.log('error data id complain', e);
       }
     };
     getData();
     getDataId();
-    getJenisKeluhan();
-  }, [keluhan]);
+    // getKeluhan();
+  }, []);
   // console.log('keluhan', keluhan);
   return (
     <View style={styles.container}>

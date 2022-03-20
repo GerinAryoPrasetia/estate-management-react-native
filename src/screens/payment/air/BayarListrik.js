@@ -9,6 +9,7 @@ import {
   TouchableOpacity,
   TextInput,
   Button,
+  ActivityIndicator,
 } from 'react-native';
 
 import ImgBayar from '../../../../assets/img/bayar.png';
@@ -21,12 +22,14 @@ const BayarListrik = ({navigation}) => {
   const [bearer, setBearer] = useState('');
   const [name, setName] = useState('');
   const [refId, setRefId] = useState('');
+  const [isInvalid, setIsInvalid] = useState(false);
+  const [isLoading, setIsloading] = useState(false);
 
   useEffect(() => {
     const getToken = async () => {
       try {
-        const value = await AsyncStorage.getItem('@storage_Key');
-        if (value !== null) {
+        const value = await AsyncStorage.getItem('@storage_bearer');
+        if (value !== null && value !== undefined) {
           // value previously stored
           console.log('sync storage account', value);
           setBearer(value);
@@ -49,7 +52,8 @@ const BayarListrik = ({navigation}) => {
     // } else {
     //   setMissingId(true);
     // }
-    fetch('https://estate.sonajaya.com/api/inquiry-postpaid-pln', {
+    setIsloading(true);
+    fetch('https://estate.royalsaranateknologi.com/api/inquiry-postpaid-pln', {
       method: 'POST',
       headers: {
         Authorization: `Bearer ${bearer}`,
@@ -71,18 +75,26 @@ const BayarListrik = ({navigation}) => {
           name !== '' &&
           refId !== ''
         ) {
-          console.log('ifname', name);
-          console.log('ref', refId);
+          // console.log('ifname', name);
+          // console.log('ref', refId);
           navigation.navigate('PaymentListrik', {
             idPelanggan: idPelanggan,
             name: name,
             refId: refId,
           });
+          setIsloading(false);
+        } else {
+          setIsInvalid(true);
+          setIsloading(false);
         }
       })
       .catch(e => {
         console.log('error inquiry', e);
       });
+    if (idPelanggan === '') {
+      setMissingId(true);
+      setIsloading(false);
+    }
   };
   // console.log(idPelanggan);
   return (
@@ -102,10 +114,21 @@ const BayarListrik = ({navigation}) => {
           onChangeText={onChange}
         />
         <TouchableOpacity style={styles.reqBtn} onPress={submitId}>
-          <Text style={{color: 'white'}}>Bayar</Text>
+          {isLoading ? (
+            <ActivityIndicator color={'#fff'} />
+          ) : (
+            <Text style={styles.loginText}>Bayar</Text>
+          )}
         </TouchableOpacity>
         {missingId ? (
           <Text style={styles.warningText}>Masukkan ID Pelanggan Anda!</Text>
+        ) : (
+          <Text></Text>
+        )}
+        {isInvalid ? (
+          <Text style={styles.warningText}>
+            Nomor Pelanggan Tidak Ditemukan
+          </Text>
         ) : (
           <Text></Text>
         )}
@@ -190,32 +213,7 @@ const styles = StyleSheet.create({
   text: {
     color: 'black',
   },
+  loginText: {
+    color: 'white',
+  },
 });
-
-{
-  /* <DropDownPicker
-          open={openOne}
-          value={valueVa}
-          items={virtualAccount}
-          setOpen={setOpenOne}
-          setValue={setValueVa}
-          setItems={setVirtualAccount}
-          placeholder="Virtual Account"
-          zIndex={3000}
-          zIndexInverse={1000}
-          style={styles.dropDown}
-        />
-
-        <DropDownPicker
-          open={openTwo}
-          value={valueTransfer}
-          items={transferBank}
-          setOpen={setOpenTwo}
-          setValue={setValueTransfer}
-          setItems={setTransferBank}
-          placeholder="Transfer Bank"
-          zIndex={2000}
-          zIndexInverse={2000}
-          style={styles.dropDown}
-        /> */
-}

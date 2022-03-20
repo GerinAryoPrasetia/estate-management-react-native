@@ -9,6 +9,7 @@ import {
   ScrollView,
   TextInput,
   Modal,
+  ActivityIndicator,
 } from 'react-native';
 
 import ImgBayar from '../../../../assets/img/bayar.png';
@@ -27,15 +28,17 @@ const BayarCicilan = ({navigation}) => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [refId, setRefId] = useState('');
   const [userId, setUserId] = useState('');
+  const [isInvalid, setIsInvalid] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     const getData = async () => {
       try {
-        const value = await AsyncStorage.getItem('@storage_Key');
+        const value = await AsyncStorage.getItem('@storage_bearer');
         // console.log('masuk getData');
         if (value !== null) {
           // value previously stored
-          console.log('sync storage pdam', value);
+          console.log('sync storage cicilan bearer', value);
           setBearer(value);
         }
       } catch (e) {
@@ -48,7 +51,7 @@ const BayarCicilan = ({navigation}) => {
         const id = await AsyncStorage.getItem('@user_id');
         if (id !== null) {
           // value previously stored
-          console.log('sync storage komplain userid', id);
+          console.log('sync storage cicilan userid', id);
           setUserId(id);
         }
       } catch (e) {
@@ -58,7 +61,7 @@ const BayarCicilan = ({navigation}) => {
     const fetchData = async () => {
       try {
         const response = await fetch(
-          'https://estate.sonajaya.com/api/multi-finance-list',
+          'https://estate.royalsaranateknologi.com/api/multi-finance-list',
           {
             method: 'GET',
             headers: {
@@ -85,7 +88,7 @@ const BayarCicilan = ({navigation}) => {
     getData();
     getDataId();
     fetchData();
-  }, [userId]);
+  }, [userId, bearer]);
   const onChange = e => {
     setIdPelanggan(e);
     setMissingId(false);
@@ -98,10 +101,11 @@ const BayarCicilan = ({navigation}) => {
     setChooseData(option);
   };
   const handleSubmit = () => {
+    setIsLoading(true);
     const postData = async () => {
       try {
         const response = await fetch(
-          'https://estate.sonajaya.com/api/inquiry-pdam',
+          'https://estate.royalsaranateknologi.com/api/multi-finance-list',
           {
             method: 'POST',
             headers: {
@@ -117,6 +121,7 @@ const BayarCicilan = ({navigation}) => {
         const json = await response.json();
         console.log('Response POST air', json);
         const refIdSet = await setRefId(json.ref_id);
+
         if (json.message === 'INQUIRY SUCCESS') {
           if (refIdSet !== '') {
             navigation.navigate('PaymentAir', {
@@ -126,6 +131,7 @@ const BayarCicilan = ({navigation}) => {
               price: json.price,
             });
             console.log('Navigate');
+            setIsLoading(false);
           }
         }
         // const results = json.map(pd => ({value: pd.code, text: pd.name}));
@@ -137,6 +143,7 @@ const BayarCicilan = ({navigation}) => {
       }
     };
     postData();
+    setIsInvalid(true);
   };
   // console.log(idPelanggan);
   return (
@@ -173,28 +180,41 @@ const BayarCicilan = ({navigation}) => {
           />
         </Modal> */}
         <View style={styles.pickerView}>
-          <Picker
-            selectedValue={selectedCabang}
-            onValueChange={(itemValue, itemIndex) =>
-              setSelectedCabang(itemValue)
-            }
-            mode="dropdown"
-            style={styles.picker}>
-            {cabang &&
-              cabang.length > 0 &&
-              cabang.map((jenis, idx) => {
-                return (
-                  <Picker.Item
-                    label={jenis.name}
-                    value={jenis.code}
-                    key={idx}
-                  />
-                );
-              })}
-          </Picker>
+          {!cabang ? (
+            <Text>Loading</Text>
+          ) : (
+            <Picker
+              selectedValue={selectedCabang}
+              onValueChange={(itemValue, itemIndex) =>
+                setSelectedCabang(itemValue)
+              }
+              mode="dropdown"
+              style={styles.picker}>
+              {cabang &&
+                cabang.length > 0 &&
+                cabang.map((jenis, idx) => {
+                  return (
+                    <Picker.Item
+                      label={jenis.name}
+                      value={jenis.code}
+                      key={idx}
+                    />
+                  );
+                })}
+            </Picker>
+          )}
         </View>
+        {isInvalid ? (
+          <Text>Maaf, nomor pelanggan tidak ditemukan</Text>
+        ) : (
+          <Text></Text>
+        )}
         <TouchableOpacity style={styles.reqBtn} onPress={handleSubmit}>
-          <Text style={{color: 'white'}}>Bayar</Text>
+          {isLoading ? (
+            <ActivityIndicator color={'#fff'} />
+          ) : (
+            <Text style={{color: 'white'}}>Bayar</Text>
+          )}
         </TouchableOpacity>
         {missingId ? (
           <Text style={styles.warningText}>Masukkan ID Pelanggan Anda!</Text>

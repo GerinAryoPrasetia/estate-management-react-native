@@ -8,21 +8,58 @@ import {
   Dimensions,
 } from 'react-native';
 import Logo from '../../../assets/img/logo.png';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const WelcomeScreen = props => {
+const WelcomeScreen = ({navigation}) => {
   const [authLoaded, setAuthLoaded] = useState(false);
+  const [isLogin, setIsLogin] = useState(false);
+  const [isBearer, setIsBearer] = useState(false);
+  // const getTokenLogin = async () => {
+  //   try {
+  //     const value = await AsyncStorage.getItem('@user_id');
+  //     console.log('token LOGIN SPLASH', value);
+  //     if (value !== null) {
+  //       setIsLogin(true);
+  //     }
+  //   } catch (e) {
+  //     console.log(e);
+  //   }
+  // };
+
+  const getBearer = async () => {
+    try {
+      const value = await AsyncStorage.getItem('@storage_bearer');
+      console.log('bearer LOGIN SPLASH', value);
+      if (value !== null) {
+        setIsLogin(true);
+      }
+    } catch (e) {
+      console.log(e);
+    }
+  };
 
   useEffect(() => {
     setTimeout(() => {
       setAuthLoaded(true);
     }, 2500);
-  }, []);
+  }, [authLoaded]);
 
   useEffect(() => {
-    if (authLoaded) {
-      props.navigation.replace('Register');
+    // getTokenLogin();
+    getBearer();
+    if (authLoaded && isLogin === false) {
+      navigation.navigate('Register');
+    } else if (isLogin) {
+      navigation.navigate('HomeTab');
     }
-  }, [authLoaded, props.navigation]);
+  }, [authLoaded, isLogin]);
+
+  // useEffect(() => {
+  //   getTokenLogin();
+  //   if (authLoaded) {
+  //     navigation.navigate('Register');
+  //   }
+  // }, [authLoaded]);
 
   return (
     <View style={styles.container}>
