@@ -19,7 +19,7 @@ const Register = ({navigation}) => {
   const [password, setPassword] = useState('');
   const [rePassword, setRePassword] = useState('');
   const [name, setName] = useState('');
-  const [match, setMatch] = useState(false);
+  const [passwordValid, setPasswordValid] = useState(true);
   const [number, setNumber] = useState('');
   const [auth, setAuth] = useState(false);
   const [isRegistraionSuccess, setIsRegistraionSuccess] = useState(false);
@@ -108,6 +108,11 @@ const Register = ({navigation}) => {
   };
   const onChangePassword = e => {
     setPassword(e);
+    if (password.length < 8) {
+      setPasswordValid(false);
+    } else {
+      setPasswordValid(true);
+    }
   };
   const onChangeNumber = e => {
     setNumber(e);
@@ -149,6 +154,11 @@ const Register = ({navigation}) => {
             onChangeText={onChangePassword}
           />
         </View>
+        {passwordValid ? (
+          <></>
+        ) : (
+          <Text style={{color: 'red'}}>Password Minimal 8 Karakter!</Text>
+        )}
         <TouchableOpacity onPress={() => navigation.navigate('Login')}>
           <Text style={styles.loginBtn}>Have an Account?</Text>
         </TouchableOpacity>

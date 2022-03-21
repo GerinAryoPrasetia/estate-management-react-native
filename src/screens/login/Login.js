@@ -132,7 +132,7 @@ const Login = ({navigation}) => {
           {isLoading ? (
             <ActivityIndicator color={'#fff'} />
           ) : (
-            <Text style={styles.loginText}>Register</Text>
+            <Text style={styles.loginText}>Login</Text>
           )}
         </TouchableOpacity>
         <TouchableOpacity onPress={() => navigation.navigate('Register')}>

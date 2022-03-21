@@ -27,6 +27,35 @@ const BayarAir = ({navigation}) => {
   const [refId, setRefId] = useState('');
   const [userId, setUserId] = useState('');
 
+  const fetchData = async () => {
+    try {
+      const response = await fetch(
+        'https://estate.royalsaranateknologi.com/api/pdam-list',
+        {
+          method: 'GET',
+          headers: {
+            Authorization: `Bearer ${bearer}`,
+            Accept: 'application/json',
+            'Content-Type': 'application/json',
+          },
+        },
+      );
+      const json = await response.json();
+      console.log(json);
+
+      setPdam(json);
+
+      // console.log(json);
+
+      // const results = json.map(pd => ({value: pd.code, text: pd.name}));
+      // console.log('RESULTS', results);
+
+      // console.log('PDAM', pdam);
+    } catch (error) {
+      console.log('error', error);
+    }
+  };
+
   useEffect(() => {
     const getData = async () => {
       try {
@@ -54,38 +83,11 @@ const BayarAir = ({navigation}) => {
         console.log(e);
       }
     };
-    const fetchData = async () => {
-      try {
-        const response = await fetch(
-          'https://estate.royalsaranateknologi.com/api/pdam-list',
-          {
-            method: 'GET',
-            headers: {
-              Authorization: `Bearer ${bearer}`,
-              Accept: 'application/json',
-              'Content-Type': 'application/json',
-            },
-          },
-        );
-        const json = await response.json();
-        console.log(json);
 
-        setPdam(json);
-
-        // console.log(json);
-
-        // const results = json.map(pd => ({value: pd.code, text: pd.name}));
-        // console.log('RESULTS', results);
-
-        // console.log('PDAM', pdam);
-      } catch (error) {
-        console.log('error', error);
-      }
-    };
     getData();
     getDataId();
     fetchData();
-  }, [userId, bearer, pdam]);
+  }, [userId, bearer]);
   const onChange = e => {
     setIdPelanggan(e);
     setMissingId(false);
