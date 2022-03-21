@@ -44,7 +44,7 @@ const PaymentPageAir = ({route, navigation}) => {
     const postData = async () => {
       try {
         const response = await fetch(
-          'https://estate.sonajaya.com/api/postpaid/payment-va',
+          'https://estate.royalsaranateknologi.com/api/postpaid/payment-va',
           {
             method: 'POST',
             headers: {

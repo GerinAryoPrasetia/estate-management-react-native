@@ -103,7 +103,7 @@ const BayarAir = ({navigation}) => {
     const postData = async () => {
       try {
         const response = await fetch(
-          'https://estate.sonajaya.com/api/inquiry-pdam',
+          'https://estate.royalsaranateknologi.com/api/inquiry-pdam',
           {
             method: 'POST',
             headers: {
@@ -112,7 +112,7 @@ const BayarAir = ({navigation}) => {
             },
             body: JSON.stringify({
               customer_id: idPelanggan,
-              code: chooseData,
+              code: selectedPdam,
             }),
           },
         );
@@ -142,6 +142,7 @@ const BayarAir = ({navigation}) => {
   };
   // console.log(idPelanggan);
   console.log('pdam', pdam);
+  console.log(selectedPdam);
   return (
     <View style={styles.container}>
       <SafeAreaView />

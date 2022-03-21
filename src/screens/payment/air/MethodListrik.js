@@ -19,6 +19,7 @@ const MethodListrik = ({route, navigation}) => {
   const [price, setPrice] = useState('');
   const [chooseData, setChooseData] = useState('Select Bank...');
   const [isModalVisible, setIsModalVisible] = useState(false);
+  const [isLoading, setIsloading] = useState(false);
 
   const {refId} = route.params;
   console.log('refIdMethod', refId);
@@ -39,7 +40,7 @@ const MethodListrik = ({route, navigation}) => {
   const handleSubmit = async () => {
     try {
       const fetchData = await fetch(
-        'https://estate.sonajaya.com/api/postpaid/payment-va',
+        'https://estate.royalsaranateknologi.com/api/postpaid/payment-va',
         {
           method: 'POST',
           headers: {
@@ -71,6 +72,7 @@ const MethodListrik = ({route, navigation}) => {
             });
           }
         });
+      fetchData();
     } catch (e) {
       console.log('error ', e);
     }

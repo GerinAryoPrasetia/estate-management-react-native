@@ -156,7 +156,6 @@ const FormComplain = () => {
         ) : (
           <Text style={{color: 'white'}}>Submit</Text>
         )}
-        <Text style={{color: 'white'}}>Submit</Text>
       </TouchableOpacity>
     </View>
   );

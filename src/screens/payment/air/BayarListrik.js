@@ -84,7 +84,7 @@ const BayarListrik = ({navigation}) => {
           });
           setIsloading(false);
         } else {
-          setIsInvalid(true);
+          // setIsInvalid(true);
           setIsloading(false);
         }
       })
@@ -125,13 +125,13 @@ const BayarListrik = ({navigation}) => {
         ) : (
           <Text></Text>
         )}
-        {isInvalid ? (
+        {/* {isInvalid ? (
           <Text style={styles.warningText}>
             Nomor Pelanggan Tidak Ditemukan
           </Text>
         ) : (
           <Text></Text>
-        )}
+        )} */}
       </View>
     </View>
   );

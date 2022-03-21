@@ -8,13 +8,16 @@ const News = () => {
 
   const getNews = async () => {
     try {
-      const response = await fetch('https://estate.sonajaya.com/api/berita', {
-        method: 'GET',
-        headers: {
-          Authorization: `Bearer ${bearer}`,
-          'Content-Type': 'application/json',
+      const response = await fetch(
+        'https://estate.royalsaranateknologi.com/api/berita',
+        {
+          method: 'GET',
+          headers: {
+            Authorization: `Bearer ${bearer}`,
+            'Content-Type': 'application/json',
+          },
         },
-      });
+      );
       const responseJson = await response.json();
       setNews(responseJson);
     } catch (e) {
@@ -36,26 +39,8 @@ const News = () => {
   };
   useEffect(() => {
     getToken();
-    const getNews = async () => {
-      try {
-        const response = await fetch(
-          'https://estate.royalsaranateknologi.com/api/berita',
-          {
-            method: 'GET',
-            headers: {
-              Authorization: `Bearer ${bearer}`,
-              'Content-Type': 'application/json',
-            },
-          },
-        );
-        const responseJson = await response.json();
-        setNews(responseJson);
-      } catch (e) {
-        console.log(e);
-      }
-    };
     getNews();
-  }, [getToken, bearer]);
+  }, [bearer, news]);
   console.log(news);
   return (
     <View style={styles.container}>

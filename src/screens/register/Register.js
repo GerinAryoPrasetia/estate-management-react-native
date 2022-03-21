@@ -29,6 +29,7 @@ const Register = ({navigation}) => {
   const [deviceToken, setDeviceToken] = useState('');
   const [bearerToken, setBearerToken] = useState('');
   const [userId, setUserId] = useState('');
+  const [emailInvalid, setEmailInvalid] = useState(false);
 
   useEffect(() => {
     async function readValue() {
@@ -91,12 +92,19 @@ const Register = ({navigation}) => {
           setIsLoading(false);
           navigation.navigate('HomeTab');
         } else {
-          setErrorText(responseJson.msg);
+          setErrorText(responseJson.message);
           console.log(errorText + 'error text');
+        }
+
+        if (
+          responseJson.message.email[0] === 'The email has already been taken.'
+        ) {
+          setEmailInvalid(true);
         }
       })
       .catch(error => {
         console.error('error regist', error);
+        setEmailInvalid(true);
       });
   };
 
@@ -145,6 +153,7 @@ const Register = ({navigation}) => {
             onChangeText={onChangeEmail}
           />
         </View>
+        {emailInvalid ? <Text>Email Sudah Terdaftar</Text> : <></>}
         <View style={styles.inputView}>
           <TextInput
             placeholder="Password"
@@ -157,7 +166,9 @@ const Register = ({navigation}) => {
         {passwordValid ? (
           <></>
         ) : (
-          <Text style={{color: 'red'}}>Password Minimal 8 Karakter!</Text>
+          <Text style={{color: 'red', marginBottom: 5}}>
+            Password Minimal 8 Karakter!
+          </Text>
         )}
         <TouchableOpacity onPress={() => navigation.navigate('Login')}>
           <Text style={styles.loginBtn}>Have an Account?</Text>
