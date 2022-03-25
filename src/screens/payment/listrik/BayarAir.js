@@ -8,6 +8,7 @@ import {
   TouchableOpacity,
   TextInput,
   Modal,
+  ActivityIndicator,
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import ImgBayar from '../../../../assets/img/bayar.png';
@@ -26,6 +27,8 @@ const BayarAir = ({navigation}) => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [refId, setRefId] = useState('');
   const [userId, setUserId] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  const [isInvalid, setIsInvalid] = useState(false);
 
   const fetchData = async () => {
     try {
@@ -100,7 +103,12 @@ const BayarAir = ({navigation}) => {
     setChooseData(option);
   };
   const handleSubmit = () => {
+    setIsLoading(true);
     const postData = async () => {
+      if (idPelanggan == '') {
+        setMissingId(true);
+        setIsLoading(false);
+      }
       try {
         const response = await fetch(
           'https://estate.royalsaranateknologi.com/api/inquiry-pdam',
@@ -128,8 +136,13 @@ const BayarAir = ({navigation}) => {
               price: json.price,
             });
             console.log('Navigate');
+            setIsLoading(false);
           }
+        } else {
+          setIsInvalid(true);
+          setIsLoading(false);
         }
+
         // const results = json.map(pd => ({value: pd.code, text: pd.name}));
         // console.log('RESULTS', results);
 
@@ -141,7 +154,7 @@ const BayarAir = ({navigation}) => {
     postData();
   };
   // console.log(idPelanggan);
-  console.log('pdam', pdam);
+  // console.log('pdam', pdam);
   console.log(selectedPdam);
   return (
     <View style={styles.container}>
@@ -176,24 +189,41 @@ const BayarAir = ({navigation}) => {
             option={pdam}
           />
         </Modal> */}
-        <Picker
-          selectedValue={selectedPdam}
-          onValueChange={(itemValue, itemIndex) => setSelectedPdam(itemValue)}
-          mode="dropdown"
-          style={styles.picker}>
-          {pdam &&
-            pdam.length > 0 &&
-            pdam.map((jenis, idx) => {
-              return (
-                <Picker.Item label={jenis.name} value={jenis.code} key={idx} />
-              );
-            })}
-        </Picker>
+        <View style={styles.pickerView}>
+          <Picker
+            selectedValue={selectedPdam}
+            onValueChange={(itemValue, itemIndex) => setSelectedPdam(itemValue)}
+            mode="dropdown"
+            style={styles.picker}>
+            {pdam &&
+              pdam.length > 0 &&
+              pdam.map((jenis, idx) => {
+                return (
+                  <Picker.Item
+                    label={jenis.name}
+                    value={jenis.code}
+                    key={idx}
+                  />
+                );
+              })}
+          </Picker>
+        </View>
         <TouchableOpacity style={styles.reqBtn} onPress={handleSubmit}>
-          <Text style={{color: 'white'}}>Bayar</Text>
+          {isLoading ? (
+            <ActivityIndicator color={'white'} />
+          ) : (
+            <Text style={{color: 'white'}}>Bayar</Text>
+          )}
         </TouchableOpacity>
         {missingId ? (
           <Text style={styles.warningText}>Masukkan ID Pelanggan Anda!</Text>
+        ) : (
+          <Text></Text>
+        )}
+        {isInvalid ? (
+          <Text style={styles.warningText}>
+            Nomor Pelanggan Tidak Ditemukan!
+          </Text>
         ) : (
           <Text></Text>
         )}
@@ -268,7 +298,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     borderWidth: 1,
     borderColor: 'grey',
-    width: '80%',
+    width: '100%',
     padding: 10,
     borderRadius: 10,
     marginTop: 20,

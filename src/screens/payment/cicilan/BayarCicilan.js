@@ -105,23 +105,24 @@ const BayarCicilan = ({navigation}) => {
     const postData = async () => {
       try {
         const response = await fetch(
-          'https://estate.royalsaranateknologi.com/api/multi-finance-list',
+          'https://estate.royalsaranateknologi.com/api/inquiry-multi-finance',
           {
             method: 'POST',
             headers: {
               Authorization: `Bearer ${bearer}`,
+              // Accept: 'application/json',
               'Content-Type': 'application/json',
             },
             body: JSON.stringify({
               customer_id: idPelanggan,
-              code: chooseData,
+              code: selectedCabang,
             }),
           },
         );
         const json = await response.json();
-        console.log('Response POST air', json);
+        console.log('Response POST cicilan', json.data);
         const refIdSet = await setRefId(json.ref_id);
-
+        console.log(json);
         if (json.message === 'INQUIRY SUCCESS') {
           if (refIdSet !== '') {
             navigation.navigate('PaymentAir', {
@@ -139,13 +140,14 @@ const BayarCicilan = ({navigation}) => {
 
         // console.log('PDAM', pdam);
       } catch (error) {
-        console.log('error POST AIR', error);
+        console.log('error POST CICILAN', error);
       }
     };
     postData();
     setIsInvalid(true);
   };
   // console.log(idPelanggan);
+  console.log(selectedCabang);
   return (
     <View style={styles.container}>
       <SafeAreaView />

@@ -24,6 +24,7 @@ const Login = ({navigation}) => {
   const [deviceTokenStorage, setDeviceTokenStorage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [tokenLogin, setTokenLogin] = useState('');
+  const [isAccountValid, setIsAccountValid] = useState(false);
   useEffect(() => {
     async function readValue() {
       const token = await AsyncStorage.getItem('@token');

@@ -11,6 +11,7 @@ import AudioRecorderPlayer, {
 } from 'react-native-audio-recorder-player';
 import {Picker} from '@react-native-picker/picker';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import RNFetchBlob from 'rn-fetch-blob';
 
 const JUZ = [
   '1',
@@ -127,7 +128,13 @@ const Hafalan = () => {
   }, [userId]);
 
   const onStartRecord = async () => {
-    const path = 'hello.m4a';
+    const dirs = RNFetchBlob.fs.dirs;
+    const path = Platform.select({
+      ios: 'hello.m4a',
+      android: `${dirs.CacheDir}/hello.mp3`,
+    });
+
+    // const uri = await audioRecorderPlayer.startRecord(path);
     const audioSet = {
       AudioEncoderAndroid: AudioEncoderAndroidType.AAC,
       AudioSourceAndroid: AudioSourceAndroidType.MIC,
@@ -150,7 +157,11 @@ const Hafalan = () => {
   const onStopRecord = async () => {
     const result = await audioRecorderPlayer.stopRecorder();
     audioRecorderPlayer.removeRecordBackListener();
+    // const record_time = audioRecorderPlayer.mmssss(
+    //   Math.floor(e.currentPosition),
+    // );
     setrecordSecs(0);
+    setRecordTime('00:00:00');
     console.log(result);
   };
   const onChangeAyat = e => {
