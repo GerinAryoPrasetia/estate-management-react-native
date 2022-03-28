@@ -20,6 +20,8 @@ import InvoiceListrik from './src/screens/payment/air/InvoiceListrik';
 import Hafalan from './src/screens/hafalan/Hafalan';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import InvoiceAir from './src/screens/payment/listrik/InvoiceAir';
+import PaymentPageCicilan from './src/screens/payment/cicilan/PaymentPageCicilan';
+import InvoiceCicilan from './src/screens/payment/cicilan/InvoiceCicilan';
 // import {initializeApp} from 'https://www.gstatic.com/firebasejs/9.6.7/firebase-app.js';
 // import {getAnalytics} from 'https://www.gstatic.com/firebasejs/9.6.7/firebase-analytics.js';
 
@@ -105,6 +107,22 @@ function HomeStackScreen() {
         component={BayarCicilan}
         options={{
           title: 'Bayar Cicilan',
+          headerStyle: {backgroundColor: '#fff'},
+        }}
+      />
+      <HomeStack.Screen
+        name="PaymentCicilan"
+        component={PaymentPageCicilan}
+        options={{
+          title: 'Payment Page',
+          headerStyle: {backgroundColor: '#fff'},
+        }}
+      />
+      <HomeStack.Screen
+        name="InvoiceCicilan"
+        component={InvoiceCicilan}
+        options={{
+          title: 'Invoice',
           headerStyle: {backgroundColor: '#fff'},
         }}
       />

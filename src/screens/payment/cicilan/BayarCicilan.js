@@ -121,30 +121,25 @@ const BayarCicilan = ({navigation}) => {
         );
         const json = await response.json();
         console.log('Response POST cicilan', json.data);
-        const refIdSet = await setRefId(json.ref_id);
-        console.log(json);
-        if (json.message === 'INQUIRY SUCCESS') {
+        const refIdSet = await setRefId(json.data.ref_id);
+        if (json.data.response_code === '00') {
           if (refIdSet !== '') {
-            navigation.navigate('PaymentAir', {
-              name: json.tr_name,
-              pdam: json.desc.pdam_name,
-              refId: json.ref_id,
-              price: json.price,
+            navigation.navigate('PaymentCicilan', {
+              name: json.data.tr_name,
+              product: selectedCabang,
+              refId: json.data.ref_id,
+              price: json.data.price,
+              desc: json.data.desc.item_name,
             });
             console.log('Navigate');
             setIsLoading(false);
           }
         }
-        // const results = json.map(pd => ({value: pd.code, text: pd.name}));
-        // console.log('RESULTS', results);
-
-        // console.log('PDAM', pdam);
       } catch (error) {
         console.log('error POST CICILAN', error);
       }
     };
     postData();
-    setIsInvalid(true);
   };
   // console.log(idPelanggan);
   console.log(selectedCabang);
@@ -165,22 +160,6 @@ const BayarCicilan = ({navigation}) => {
           onChangeText={onChange}
         />
         <Text style={styles.title}>Pilih Cabang</Text>
-        {/* <TouchableOpacity
-          style={styles.touchableOpacity}
-          onPress={() => changeModalVisibility(true)}>
-          <Text style={styles.text}>{chooseData}</Text>
-        </TouchableOpacity>
-        <Modal
-          transparent={true}
-          animationType="fade"
-          visible={isModalVisible}
-          nRequestClose={() => changeModalVisibility(false)}>
-          <ModalPickerPdam
-            changeModalVisibility={changeModalVisibility}
-            setData={setData}
-            option={pdam}
-          />
-        </Modal> */}
         <View style={styles.pickerView}>
           {!cabang ? (
             <Text>Loading</Text>

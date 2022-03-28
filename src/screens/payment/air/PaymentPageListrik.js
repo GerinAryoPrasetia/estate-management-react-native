@@ -7,6 +7,7 @@ import {
   Image,
   TextInput,
   TouchableOpacity,
+  ActivityIndicator,
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {Picker} from '@react-native-picker/picker';
@@ -19,6 +20,7 @@ const PaymentPageListrik = ({route, navigation}) => {
   const [refIdMethod, setRefIdMethod] = useState('');
   const [bearer, setBearer] = useState('');
   const [selectedBank, setSelectedBank] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
   const [openOne, setOpenOne] = useState(false);
   const [openTwo, setOpenTwo] = useState(false);
   const [valueVa, setValueVa] = useState(null);
@@ -72,10 +74,15 @@ const PaymentPageListrik = ({route, navigation}) => {
         <TouchableOpacity
           style={styles.reqBtn}
           onPress={() => {
+            setIsLoading(true);
             setRefIdMethod(refId);
             navigation.navigate('MethodListrik', {refId: refIdMethod});
           }}>
-          <Text style={{color: 'white'}}>Bayar</Text>
+          {isLoading ? (
+            <ActivityIndicator color={'white'} />
+          ) : (
+            <Text style={{color: 'white'}}>Bayar</Text>
+          )}
         </TouchableOpacity>
       </View>
     </View>

@@ -12,6 +12,7 @@ import ImgBayar from '../../../../assets/img/bayar.png';
 import SelectDropdown from 'react-native-select-dropdown';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import ModalPicker from '../../../components/ModalPicker';
+import {Picker} from '@react-native-picker/picker';
 
 const MethodListrik = ({route, navigation}) => {
   const [bearer, setBearer] = useState('');
@@ -20,6 +21,13 @@ const MethodListrik = ({route, navigation}) => {
   const [chooseData, setChooseData] = useState('Select Bank...');
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [isLoading, setIsloading] = useState(false);
+  const [selectedBank, setSelectedBank] = useState('');
+  const OPTIONS = [
+    {text: 'BNI VA', value: 'bni'},
+    {text: 'BCA VA', value: 'bca'},
+    {text: 'MANDIRI VA', value: 'mandiri'},
+    {text: 'BRI VA', value: 'bri'},
+  ];
 
   const {refId} = route.params;
   console.log('refIdMethod', refId);
@@ -49,7 +57,7 @@ const MethodListrik = ({route, navigation}) => {
           },
           body: JSON.stringify({
             ref_id: refId,
-            bank: chooseData,
+            bank: selectedBank,
           }),
         },
       )
@@ -102,16 +110,17 @@ const MethodListrik = ({route, navigation}) => {
           onPress={() => changeModalVisibility(true)}>
           <Text style={styles.text}>{chooseData}</Text>
         </TouchableOpacity>
-        <Modal
-          transparent={true}
-          animationType="fade"
-          visible={isModalVisible}
-          nRequestClose={() => changeModalVisibility(false)}>
-          <ModalPicker
-            changeModalVisibility={changeModalVisibility}
-            setData={setData}
-          />
-        </Modal>
+        <Picker
+          selectedValue={selectedBank}
+          onValueChange={(itemValue, itemIndex) => setSelectedBank(itemValue)}
+          mode="dropdown"
+          style={styles.picker}>
+          {OPTIONS &&
+            OPTIONS.length > 0 &&
+            OPTIONS.map((b, idx) => {
+              return <Picker.Item label={b.text} value={b.value} key={idx} />;
+            })}
+        </Picker>
         <TouchableOpacity style={styles.reqBtn} onPress={handleSubmit}>
           <Text style={{color: 'white'}}>Bayar</Text>
         </TouchableOpacity>
