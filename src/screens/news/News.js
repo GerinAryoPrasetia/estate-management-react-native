@@ -40,12 +40,12 @@ const News = () => {
   useEffect(() => {
     getToken();
     getNews();
-  }, [bearer, news]);
+  }, [bearer]);
   console.log(news);
   return (
     <View style={styles.container}>
       <SafeAreaView />
-      <Text>{news.status}</Text>
+      <Text style={styles.title}>Belum Ada Berita Terbaru Hari Ini</Text>
       {news.data?.map(n => {
         return (
           <Text style={{color: 'black'}} key={n.id}>
@@ -62,9 +62,12 @@ export default News;
 const styles = StyleSheet.create({
   container: {
     alignItems: 'center',
+    justifyContent: 'center',
+    flex: 1,
   },
   title: {
     fontWeight: 'bold',
+    color: 'black',
     fontSize: 18,
   },
 });

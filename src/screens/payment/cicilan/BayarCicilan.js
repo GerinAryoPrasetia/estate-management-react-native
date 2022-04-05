@@ -32,40 +32,41 @@ const BayarCicilan = ({navigation}) => {
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
-    const getData = async () => {
-      try {
-        const value = await AsyncStorage.getItem('@storage_bearer');
-        // console.log('masuk getData');
-        if (value !== null) {
-          // value previously stored
-          console.log('sync storage cicilan bearer', value);
-          setBearer(value);
-        }
-      } catch (e) {
-        // error reading value
-        console.log(e);
-      }
-    };
-    const getDataId = async () => {
-      try {
-        const id = await AsyncStorage.getItem('@user_id');
-        if (id !== null) {
-          // value previously stored
-          console.log('sync storage cicilan userid', id);
-          setUserId(id);
-        }
-      } catch (e) {
-        console.log(e);
-      }
-    };
+    // const getData = async () => {
+    //   try {
+    //     const value = await AsyncStorage.getItem('@storage_bearer');
+    //     // console.log('masuk getData');
+    //     if (value !== null) {
+    //       // value previously stored
+    //       console.log('sync storage cicilan bearer', value);
+    //       setBearer(value);
+    //     }
+    //   } catch (e) {
+    //     // error reading value
+    //     console.log(e);
+    //   }
+    // };
+    // const getDataId = async () => {
+    //   try {
+    //     const id = await AsyncStorage.getItem('@user_id');
+    //     if (id !== null) {
+    //       // value previously stored
+    //       console.log('sync storage cicilan userid', id);
+    //       setUserId(id);
+    //     }
+    //   } catch (e) {
+    //     console.log(e);
+    //   }
+    // };
     const fetchData = async () => {
       try {
+        const token = await AsyncStorage.getItem('@storage_bearer');
         const response = await fetch(
           'https://estate.royalsaranateknologi.com/api/multi-finance-list',
           {
             method: 'GET',
             headers: {
-              Authorization: `Bearer ${bearer}`,
+              Authorization: `Bearer ${token}`,
               'Content-Type': 'application/json',
             },
           },
@@ -85,10 +86,10 @@ const BayarCicilan = ({navigation}) => {
         console.log('error', error);
       }
     };
-    getData();
-    getDataId();
+    // getData();
+    // getDataId();
     fetchData();
-  }, [userId, bearer]);
+  }, []);
   const onChange = e => {
     setIdPelanggan(e);
     setMissingId(false);

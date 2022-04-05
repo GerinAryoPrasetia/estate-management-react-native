@@ -12,7 +12,7 @@ import {
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const AmbilSampah = () => {
+const AmbilSampah = ({navigation}) => {
   const [userId, setUserId] = useState('');
   const [bearer, setBearer] = useState('');
   const [alamat, setAlamat] = useState('');
@@ -96,7 +96,10 @@ const AmbilSampah = () => {
             {/* <Ionicons name="check" /> */}
             <Pressable
               style={[styles.button, styles.buttonClose]}
-              onPress={() => setModalVisible(!modalVisible)}>
+              onPress={() => {
+                setModalVisible(!modalVisible);
+                navigation.navigate('RiwayatSampah', {success: true});
+              }}>
               <Text style={styles.textStyle}>Tutup</Text>
             </Pressable>
           </View>

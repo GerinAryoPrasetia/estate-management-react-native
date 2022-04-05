@@ -15,7 +15,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import {Picker} from '@react-native-picker/picker';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
-const FormComplain = () => {
+const FormComplain = ({navigation}) => {
   const [komplainText, setKomplainText] = useState('');
   const [bearer, setBearer] = useState('');
   const [userId, setUserId] = useState('');
@@ -25,85 +25,105 @@ const FormComplain = () => {
   const [change, setChange] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
 
-  const getJenisKeluhan = async () => {
-    const response = await fetch(
-      'https://estate.royalsaranateknologi.com/api/jenis-keluhan',
-    );
-    const responseJson = await response.json();
-    console.log(responseJson);
-    if (responseJson !== null) {
-      setJenisKeluhan(responseJson);
-    }
-  };
   useEffect(() => {
+    const getJenisKeluhan = async () => {
+      const response = await fetch(
+        'https://estate.royalsaranateknologi.com/api/jenis-keluhan',
+      );
+      const responseJson = await response.json();
+      if (responseJson !== null) {
+        setJenisKeluhan(responseJson);
+      }
+    };
+    const getData = async () => {
+      try {
+        const value = await AsyncStorage.getItem('@storage_bearer');
+        if (value !== null) {
+          // value previously stored
+          console.log('sync storage komplain bearer', value);
+          setBearer(value);
+        }
+      } catch (e) {
+        console.log(e);
+      }
+    };
+    const getDataId = async () => {
+      try {
+        const id = await AsyncStorage.getItem('@user_id');
+        if (id !== null) {
+          // value previously stored
+          console.log('sync storage komplain userid', id);
+          setUserId(id);
+        }
+      } catch (e) {
+        console.log(e);
+      }
+    };
     getJenisKeluhan();
-  }, []);
-  const getData = async () => {
-    try {
-      const value = await AsyncStorage.getItem('@storage_bearer');
-      if (value !== null) {
-        // value previously stored
-        console.log('sync storage komplain bearer', value);
-        setBearer(value);
-      }
-    } catch (e) {
-      console.log(e);
-    }
-  };
-  const getDataId = async () => {
-    try {
-      const id = await AsyncStorage.getItem('@user_id');
-      if (id !== null) {
-        // value previously stored
-        console.log('sync storage komplain userid', id);
-        setUserId(id);
-      }
-    } catch (e) {
-      console.log(e);
-    }
-  };
-  useEffect(() => {
-    getData();
     getDataId();
-    // getJenisKeluhan();
+    getData();
   }, [userId, bearer]);
 
   const onChangeKomplain = e => {
     setKomplainText(e);
   };
 
-  const handleSubmit = () => {
-    // const requestOption = ;
+  // const handleSubmit = async () => {
+  //   // const requestOption = ;
+  //   setIsLoading(true);
+  //   const response = await fetch(
+  //     'https://estate.royalsaranateknologi.com/api/keluhan',
+  //     {
+  //       method: 'POST',
+  //       headers: {
+  //         Authorization: `Bearer ${bearer}`,
+  //         'Content-Type': 'application/json',
+  //       },
+  //       body: JSON.stringify({
+  //         user_id: userId,
+  //         unit_id: 1,
+  //         jenis_keluhan_id: selectedJenis,
+  //         laporan: komplainText,
+  //       }),
+  //     },
+  //   );
+  //   const responseJson = await response.json();
+  //   // console.log(bearer);
+  //   if (responseJson.status === 'success') {
+  //     setModalVisible(true);
+  //     setIsLoading(false);
+  //   }
+  // };
+  const handleSubmit = async () => {
     setIsLoading(true);
-    const postData = async () => {
-      const response = await fetch(
-        'https://estate.royalsaranateknologi.com/api/keluhan',
-        {
-          method: 'POST',
-          headers: {
-            Authorization: `Bearer ${bearer}`,
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            user_id: userId,
-            unit_id: 1,
-            jenis_keluhan_id: selectedJenis,
-            laporan: komplainText,
-          }),
+    try {
+      await fetch('https://estate.royalsaranateknologi.com/api/keluhan', {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${bearer}`,
+          'Content-Type': 'application/json',
         },
-      );
-      const responseJson = await response.json();
-      console.log(responseJson);
-      // console.log(bearer);
-      if (responseJson.status === 'success') {
-        setModalVisible(true);
-        setIsLoading(false);
-      }
-    };
-    postData();
+        body: JSON.stringify({
+          user_id: userId,
+          unit_id: 1,
+          jenis_keluhan_id: selectedJenis,
+          laporan: komplainText,
+        }),
+      })
+        .then(response => response.json())
+        .then(data => {
+          console.log(data);
+          if (data.status === 'success') {
+            setModalVisible(true);
+            setIsLoading(false);
+          }
+        });
+    } catch (e) {
+      console.log('error complain', e);
+    }
   };
   // console.log('jenis keluhan', jenisKeluhan);
-  console.log('Selected', selectedJenis);
+  // console.log('Selected', selectedJenis);
   return (
     <View style={styles.container}>
       <Modal
@@ -120,7 +140,13 @@ const FormComplain = () => {
             {/* <Ionicons name="check" /> */}
             <Pressable
               style={[styles.button, styles.buttonClose]}
-              onPress={() => setModalVisible(!modalVisible)}>
+              onPress={() => {
+                setModalVisible(!modalVisible);
+                navigation.navigate('RiwayatComplain', {
+                  success: true,
+                  data: 'sukses',
+                });
+              }}>
               <Text style={styles.textStyle}>Tutup</Text>
             </Pressable>
           </View>

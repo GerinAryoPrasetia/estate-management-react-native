@@ -22,6 +22,10 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import InvoiceAir from './src/screens/payment/listrik/InvoiceAir';
 import PaymentPageCicilan from './src/screens/payment/cicilan/PaymentPageCicilan';
 import InvoiceCicilan from './src/screens/payment/cicilan/InvoiceCicilan';
+import RiwayatComplain from './src/screens/complain/RiwayatComplain';
+import FormComplain from './src/screens/complain/FormComplain';
+import RiwayatAmbil from './src/screens/sampah/RiwayatAmbil';
+import AmbilSampah from './src/screens/sampah/AmbilSampah';
 // import {initializeApp} from 'https://www.gstatic.com/firebasejs/9.6.7/firebase-app.js';
 // import {getAnalytics} from 'https://www.gstatic.com/firebasejs/9.6.7/firebase-analytics.js';
 
@@ -57,6 +61,22 @@ function HomeStackScreen() {
       <HomeStack.Screen
         name="Sampah"
         component={Sampah}
+        options={{
+          title: 'Ambil Sampah',
+          headerStyle: {backgroundColor: '#fff'},
+        }}
+      />
+      <HomeStack.Screen
+        name="RiwayatSampah"
+        component={RiwayatAmbil}
+        options={{
+          title: 'Ambil Sampah',
+          headerStyle: {backgroundColor: '#fff'},
+        }}
+      />
+      <HomeStack.Screen
+        name="FormSampah"
+        component={AmbilSampah}
         options={{
           title: 'Ambil Sampah',
           headerStyle: {backgroundColor: '#fff'},
@@ -145,6 +165,22 @@ function HomeStackScreen() {
       <HomeStack.Screen
         name="Complain"
         component={Complain}
+        options={{
+          title: 'Komplain',
+          headerStyle: {backgroundColor: '#fff'},
+        }}
+      />
+      <HomeStack.Screen
+        name="RiwayatComplain"
+        component={RiwayatComplain}
+        options={{
+          title: 'Komplain',
+          headerStyle: {backgroundColor: '#fff'},
+        }}
+      />
+      <HomeStack.Screen
+        name="FormComplain"
+        component={FormComplain}
         options={{
           title: 'Komplain',
           headerStyle: {backgroundColor: '#fff'},

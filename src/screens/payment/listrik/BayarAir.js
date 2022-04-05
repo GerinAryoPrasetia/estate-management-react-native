@@ -30,67 +30,60 @@ const BayarAir = ({navigation}) => {
   const [isLoading, setIsLoading] = useState(false);
   const [isInvalid, setIsInvalid] = useState(false);
 
-  const fetchData = async () => {
-    try {
-      const response = await fetch(
-        'https://estate.royalsaranateknologi.com/api/pdam-list',
-        {
-          method: 'GET',
-          headers: {
-            Authorization: `Bearer ${bearer}`,
-            Accept: 'application/json',
-            'Content-Type': 'application/json',
-          },
-        },
-      );
-      const json = await response.json();
-      console.log(json);
-
-      setPdam(json);
-
-      // console.log(json);
-
-      // const results = json.map(pd => ({value: pd.code, text: pd.name}));
-      // console.log('RESULTS', results);
-
-      // console.log('PDAM', pdam);
-    } catch (error) {
-      console.log('error', error);
-    }
-  };
-
   useEffect(() => {
-    const getData = async () => {
-      try {
-        const value = await AsyncStorage.getItem('@storage_bearer');
-        // console.log('masuk getData');
-        if (value !== null || value !== undefined) {
-          // value previously stored
-          console.log('sync storage pdam', value);
-          setBearer(value);
-        }
-      } catch (e) {
-        // error reading value
-        console.log(e);
-      }
-    };
-    const getDataId = async () => {
-      try {
-        const id = await AsyncStorage.getItem('@user_id');
-        if (id !== null) {
-          // value previously stored
-          console.log('sync storage komplain userid', id);
-          setUserId(id);
-        }
-      } catch (e) {
-        console.log(e);
-      }
-    };
+    // const getData = async () => {
+    //   try {
+    //     const value = await AsyncStorage.getItem('@storage_bearer');
+    //     // console.log('masuk getData');
+    //     if (value !== null || value !== undefined) {
+    //       // value previously stored
+    //       console.log('sync storage pdam', value);
+    //       setBearer(value);
+    //     }
+    //   } catch (e) {
+    //     // error reading value
+    //     console.log(e);
+    //   }
+    // };
+    // const getDataId = async () => {
+    //   try {
+    //     const id = await AsyncStorage.getItem('@user_id');
+    //     if (id !== null) {
+    //       // value previously stored
+    //       console.log('sync storage komplain userid', id);
+    //       setUserId(id);
+    //     }
+    //   } catch (e) {
+    //     console.log(e);
+    //   }
+    // };
 
-    getData();
-    getDataId();
+    // getData();
+    // getDataId();
+    // fetchData();
+    const fetchData = async () => {
+      try {
+        const token = await AsyncStorage.getItem('@storage_bearer');
+        const response = await fetch(
+          'https://estate.royalsaranateknologi.com/api/pdam-list',
+          {
+            method: 'GET',
+            headers: {
+              Authorization: `Bearer ${token}`,
+              Accept: 'application/json',
+              'Content-Type': 'application/json',
+            },
+          },
+        );
+        const json = await response.json();
+        setPdam(json);
+      } catch (error) {
+        console.log('error', error);
+      }
+    };
     fetchData();
-  }, [userId, bearer]);
+  }, []);
+
   const onChange = e => {
     setIdPelanggan(e);
     setMissingId(false);
