@@ -102,6 +102,18 @@ const Home = ({route, navigation}) => {
     console.log(userId);
   }, [bearer, data, userId]);
 
+  const sendSos = () => {
+    try {
+      fetch('https://estate.royalsaranateknologi.com/api/sos')
+        .then(respnonse => respnonse.json())
+        .then(data => {
+          console.log(data);
+        });
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
   return (
     <View style={styles.container}>
       <SafeAreaView />
@@ -118,7 +130,9 @@ const Home = ({route, navigation}) => {
           <View style={styles.modalView}>
             <Text style={styles.modalText}>SOS</Text>
             <Text style={styles.text}>Ingin Melakukan SOS Sekarang?</Text>
-            <Pressable style={[styles.button, styles.buttonSos]}>
+            <Pressable
+              style={[styles.button, styles.buttonSos]}
+              onPress={sendSos}>
               <Text style={styles.textStyle}>SOS</Text>
             </Pressable>
             <Pressable
