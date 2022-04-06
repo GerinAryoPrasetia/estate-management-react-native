@@ -8,10 +8,12 @@ import {
   Image,
   ScrollView,
   Modal,
+  ActivityIndicator,
 } from 'react-native';
 import ImgBayar from '../../../../assets/img/bayar.png';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import ModalPicker from '../../../components/ModalPicker';
+import {Picker} from '@react-native-picker/picker';
 
 const PaymentPageAir = ({route, navigation}) => {
   const {name, pdam, refId, price} = route.params;
@@ -21,7 +23,14 @@ const PaymentPageAir = ({route, navigation}) => {
   const [amount, setAmount] = useState('');
   const [chooseData, setChooseData] = useState('Select Bank...');
   const [isModalVisible, setIsModalVisible] = useState(false);
-
+  const [selectedBank, setSelectedBank] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  const bank = [
+    {text: 'BNI VA', value: 'bni'},
+    {text: 'BCA VA', value: 'bca'},
+    {text: 'MANDIRI VA', value: 'mandiri'},
+    {text: 'BRI VA', value: 'bri'},
+  ];
   useEffect(() => {
     const getData = async () => {
       try {
@@ -33,7 +42,7 @@ const PaymentPageAir = ({route, navigation}) => {
           setBearer(value);
         }
       } catch (e) {
-        // error reading value
+        // error reading valuew
         console.log(e);
       }
     };
@@ -41,6 +50,7 @@ const PaymentPageAir = ({route, navigation}) => {
   }, []);
 
   const handleSubmit = () => {
+    setIsLoading(true);
     const postData = async () => {
       try {
         const response = await fetch(
@@ -53,18 +63,18 @@ const PaymentPageAir = ({route, navigation}) => {
             },
             body: JSON.stringify({
               ref_id: refId,
-              bank: chooseData,
+              bank: selectedBank,
             }),
           },
         );
         const responseJson = await response.json();
         console.log(responseJson);
-        setNumberVa(responseJson.va_numbers[0].va_number);
-        setAmount(responseJson.gross_amount);
+        // setNumberVa();
         if (responseJson.status_code === '201') {
+          setIsLoading(false);
           navigation.navigate('InvoiceAir', {
-            numberVa: numberVa,
-            amount: amount,
+            numberVa: responseJson.va_numbers[0].va_number,
+            amount: responseJson.gross_amount,
           });
           console.log('Navigate');
         }
@@ -74,59 +84,61 @@ const PaymentPageAir = ({route, navigation}) => {
     };
     postData();
   };
-  const changeModalVisibility = bool => {
-    setIsModalVisible(bool);
-  };
-
-  const setData = option => {
-    setChooseData(option);
-  };
-  console.log(chooseData);
+  console.log(selectedBank);
   return (
     <View style={styles.container}>
-      <SafeAreaView />
-      <View style={styles.header}>
-        <View>
-          <Text style={styles.greetingText}>Bayar Listrik</Text>
+      <ScrollView>
+        <SafeAreaView />
+        <View style={styles.header}>
+          <View>
+            <Text style={styles.greetingText}>Bayar Listrik</Text>
+          </View>
+          <Image source={ImgBayar} />
         </View>
-        <Image source={ImgBayar} />
-      </View>
-      <View style={styles.content}>
-        {/* <Text>ID Pelanggan Anda</Text>
+        <View style={styles.content}>
+          {/* <Text>ID Pelanggan Anda</Text>
         <View style={styles.idData}>
           <Text>{idPelanggan}</Text>
         </View> */}
-        <Text style={styles.title}>Nama Pelanggan</Text>
-        <View style={styles.idData}>
-          <Text style={styles.text}>{name}</Text>
+          <Text style={styles.title}>Nama Pelanggan</Text>
+          <View style={styles.idData}>
+            <Text style={styles.text}>{name}</Text>
+          </View>
+          <Text style={styles.title}>Cabang PDAM</Text>
+          <View style={styles.idData}>
+            <Text style={styles.text}>{pdam}</Text>
+          </View>
+          <Text style={styles.title}>Biaya</Text>
+          <View style={styles.idData}>
+            <Text style={styles.text}>Rp {price}</Text>
+          </View>
+          <Text style={styles.textBank}>Select Bank</Text>
+          <View style={styles.pickerView}>
+            <Picker
+              selectedValue={selectedBank}
+              onValueChange={(itemValue, itemIndex) =>
+                setSelectedBank(itemValue)
+              }
+              mode="dropdown"
+              style={styles.picker}>
+              {bank &&
+                bank.length > 0 &&
+                bank.map((b, idx) => {
+                  return (
+                    <Picker.Item label={b.text} value={b.value} key={idx} />
+                  );
+                })}
+            </Picker>
+          </View>
+          <TouchableOpacity style={styles.reqBtn} onPress={handleSubmit}>
+            {isLoading ? (
+              <ActivityIndicator color={'white'} />
+            ) : (
+              <Text style={{color: 'white'}}>Bayar</Text>
+            )}
+          </TouchableOpacity>
         </View>
-        <Text style={styles.title}>Cabang PDAM</Text>
-        <View style={styles.idData}>
-          <Text style={styles.text}>{pdam}</Text>
-        </View>
-        <Text style={styles.title}>Biaya</Text>
-        <View style={styles.idData}>
-          <Text style={styles.text}>Rp {price}</Text>
-        </View>
-        <TouchableOpacity
-          style={styles.touchableOpacity}
-          onPress={() => changeModalVisibility(true)}>
-          <Text style={styles.text}>{chooseData}</Text>
-        </TouchableOpacity>
-        <Modal
-          transparent={true}
-          animationType="fade"
-          visible={isModalVisible}
-          nRequestClose={() => changeModalVisibility(false)}>
-          <ModalPicker
-            changeModalVisibility={changeModalVisibility}
-            setData={setData}
-          />
-        </Modal>
-        <TouchableOpacity style={styles.reqBtn} onPress={handleSubmit}>
-          <Text style={{color: 'white'}}>Bayar</Text>
-        </TouchableOpacity>
-      </View>
+      </ScrollView>
     </View>
   );
 };
@@ -204,13 +216,29 @@ const styles = StyleSheet.create({
   idData: {
     marginTop: 10,
     backgroundColor: 'white',
-    width: '80%',
+    width: '100%',
     padding: 10,
     borderWidth: 1,
     borderColor: 'black',
     borderRadius: 10,
   },
   text: {
+    color: 'black',
+  },
+  textBank: {
+    color: 'black',
+    marginTop: 10,
+  },
+  picker: {
+    marginVertical: 10,
+    width: 300,
+    padding: 10,
+    borderWidth: 1,
+    borderColor: '#666',
+    backgroundColor: '#fff',
+    color: 'black',
+  },
+  pickerItem: {
     color: 'black',
   },
 });

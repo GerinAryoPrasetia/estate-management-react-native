@@ -1,5 +1,12 @@
 import React, {useState, useEffect} from 'react';
-import {View, Text, StyleSheet, SafeAreaView, Image} from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  SafeAreaView,
+  Image,
+  Pressable,
+} from 'react-native';
 import ImgBayar from '../../../../assets/img/bayar.png';
 
 const InvoiceCicilan = ({route, navigation}) => {
@@ -19,9 +26,20 @@ const InvoiceCicilan = ({route, navigation}) => {
         <Text style={(styles.title, styles.subTitle)}>
           Nomor Virtual Account
         </Text>
-        <Text style={styles.detail}>{numberVa}</Text>
+        <View style={styles.idData}>
+          <Text style={styles.detail}>{numberVa}</Text>
+        </View>
         <Text style={(styles.title, styles.subTitle)}>Total Biaya</Text>
-        <Text style={styles.detail}>Rp {amount}</Text>
+        <View style={styles.idData}>
+          <Text style={styles.detail}>Rp {amount}</Text>
+        </View>
+        <Pressable
+          style={styles.reqBtn}
+          onPress={() => {
+            navigation.navigate('HomePage');
+          }}>
+          <Text style={styles.text}>Back to Home</Text>
+        </Pressable>
       </View>
     </View>
   );
@@ -107,5 +125,18 @@ const styles = StyleSheet.create({
     padding: 10,
     borderRadius: 10,
     marginTop: 20,
+  },
+  idData: {
+    marginTop: 10,
+    backgroundColor: 'white',
+    width: '100%',
+    padding: 10,
+    borderWidth: 1,
+    borderColor: 'black',
+    borderRadius: 10,
+    marginBottom: 10,
+  },
+  text: {
+    color: 'white',
   },
 });

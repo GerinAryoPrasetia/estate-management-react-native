@@ -95,8 +95,9 @@ const BayarAir = ({navigation}) => {
   const setData = option => {
     setChooseData(option);
   };
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     setIsLoading(true);
+    const token = await AsyncStorage.getItem('@storage_bearer');
     const postData = async () => {
       if (idPelanggan == '') {
         setMissingId(true);
@@ -108,7 +109,7 @@ const BayarAir = ({navigation}) => {
           {
             method: 'POST',
             headers: {
-              Authorization: `Bearer ${bearer}`,
+              Authorization: `Bearer ${token}`,
               'Content-Type': 'application/json',
             },
             body: JSON.stringify({

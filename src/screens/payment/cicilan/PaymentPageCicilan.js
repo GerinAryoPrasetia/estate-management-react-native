@@ -67,12 +67,22 @@ const PaymentPageCicilan = ({route, navigation}) => {
         );
         const responseJson = await response.json();
         console.log(responseJson);
-        setNumberVa(responseJson.va_numbers[0].va_number);
-        setAmount(responseJson.gross_amount);
-        if (responseJson.status_code === '201') {
+        if (
+          responseJson.status_code === '201' &&
+          (selectedBank === 'bni' ||
+            selectedBank === 'bca' ||
+            selectedBank === 'bri')
+        ) {
           navigation.navigate('InvoiceCicilan', {
-            numberVa: numberVa,
-            amount: amount,
+            numberVa: responseJson.va_numbers[0].va_number,
+            amount: responseJson.gross_amount,
+          });
+          console.log('Navigate');
+        }
+        if (responseJson.status_code === '201' && selectedBank === 'mandiri') {
+          navigation.navigate('InvoiceCicilan', {
+            numberVa: responseJson.merchant_id,
+            amount: responseJson.gross_amount,
           });
           console.log('Navigate');
         }
@@ -102,10 +112,6 @@ const PaymentPageCicilan = ({route, navigation}) => {
           <Image source={ImgBayar} />
         </View>
         <View style={styles.content}>
-          {/* <Text>ID Pelanggan Anda</Text>
-        <View style={styles.idData}>
-          <Text>{idPelanggan}</Text>
-        </View> */}
           <Text style={styles.title}>Nama Pelanggan</Text>
           <View style={styles.idData}>
             <Text style={styles.text}>{name}</Text>

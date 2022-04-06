@@ -101,8 +101,9 @@ const BayarCicilan = ({navigation}) => {
   const setData = option => {
     setChooseData(option);
   };
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     setIsLoading(true);
+    const token = await AsyncStorage.getItem('@storage_bearer');
     const postData = async () => {
       try {
         const response = await fetch(
@@ -110,7 +111,7 @@ const BayarCicilan = ({navigation}) => {
           {
             method: 'POST',
             headers: {
-              Authorization: `Bearer ${bearer}`,
+              Authorization: `Bearer ${token}`,
               // Accept: 'application/json',
               'Content-Type': 'application/json',
             },
