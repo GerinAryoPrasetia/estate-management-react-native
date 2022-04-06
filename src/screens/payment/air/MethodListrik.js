@@ -13,6 +13,7 @@ import SelectDropdown from 'react-native-select-dropdown';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import ModalPicker from '../../../components/ModalPicker';
 import {Picker} from '@react-native-picker/picker';
+import {color} from 'react-native-elements/dist/helpers';
 
 const MethodListrik = ({route, navigation}) => {
   const [bearer, setBearer] = useState('');
@@ -21,7 +22,7 @@ const MethodListrik = ({route, navigation}) => {
   const [chooseData, setChooseData] = useState('Select Bank...');
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [isLoading, setIsloading] = useState(false);
-  const [selectedBank, setSelectedBank] = useState('');
+  const [selectedBank, setSelectedBank] = useState('bni');
   const OPTIONS = [
     {text: 'BNI VA', value: 'bni'},
     {text: 'BCA VA', value: 'bca'},
@@ -47,7 +48,7 @@ const MethodListrik = ({route, navigation}) => {
   });
   const handleSubmit = async () => {
     try {
-      const fetchData = await fetch(
+      await fetch(
         'https://estate.royalsaranateknologi.com/api/postpaid/payment-va',
         {
           method: 'POST',
@@ -64,35 +65,19 @@ const MethodListrik = ({route, navigation}) => {
         .then(response => response.json())
         .then(responseJson => {
           console.log(responseJson);
-          setNumberVa(responseJson.va_numbers[0].va_number);
-          setPrice(responseJson.gross_amount);
-          console.log(price);
-          console.log(numberVa);
           if (
             responseJson.status_message ===
-              'Success, Bank Transfer transaction is created' &&
-            numberVa !== undefined &&
-            numberVa !== ''
+            'Success, Bank Transfer transaction is created'
           ) {
             navigation.navigate('InvoiceListrik', {
-              numberVa: numberVa,
-              price: price,
+              numberVa: responseJson.va_numbers[0].va_number,
+              price: responseJson.gross_amount,
             });
           }
         });
-      fetchData();
     } catch (e) {
       console.log('error ', e);
     }
-  };
-  console.log('ref id METHOD', refId);
-  console.log('CHOOSE DATA', chooseData);
-  const changeModalVisibility = bool => {
-    setIsModalVisible(bool);
-  };
-
-  const setData = option => {
-    setChooseData(option);
   };
   return (
     <View style={styles.container}>
@@ -104,12 +89,7 @@ const MethodListrik = ({route, navigation}) => {
         <Image source={ImgBayar} />
       </View>
       <View style={styles.content}>
-        <Text style={styles.title}>Pilih Metode Pembayaran</Text>
-        <TouchableOpacity
-          style={styles.touchableOpacity}
-          onPress={() => changeModalVisibility(true)}>
-          <Text style={styles.text}>{chooseData}</Text>
-        </TouchableOpacity>
+        <Text style={styles.titleBlack}>Pilih Metode Pembayaran</Text>
         <Picker
           selectedValue={selectedBank}
           onValueChange={(itemValue, itemIndex) => setSelectedBank(itemValue)}
@@ -214,5 +194,25 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     marginHorizontal: 20,
     marginVertical: 20,
+  },
+  textBank: {
+    color: 'black',
+    marginTop: 10,
+  },
+  picker: {
+    marginVertical: 10,
+    width: 300,
+    padding: 10,
+    borderWidth: 1,
+    borderColor: '#666',
+    backgroundColor: '#fff',
+    color: 'black',
+  },
+  pickerItem: {
+    color: 'black',
+  },
+  titleBlack: {
+    color: 'black',
+    fontSize: 18,
   },
 });

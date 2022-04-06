@@ -68,19 +68,13 @@ const BayarListrik = ({navigation}) => {
         console.log(responseJson, 'data pln inquiry');
         setName(responseJson.data.tr_name);
         setRefId(responseJson.data.ref_id);
-        if (
-          responseJson.data.message === 'INQUIRY SUCCESS' &&
-          name !== undefined &&
-          refId !== undefined &&
-          name !== '' &&
-          refId !== ''
-        ) {
+        if (responseJson.data.message === 'INQUIRY SUCCESS') {
           // console.log('ifname', name);
           // console.log('ref', refId);
           navigation.navigate('PaymentListrik', {
             idPelanggan: idPelanggan,
-            name: name,
-            refId: refId,
+            name: responseJson.data.tr_name,
+            refId: responseJson.data.ref_id,
           });
           setIsloading(false);
         } else {
