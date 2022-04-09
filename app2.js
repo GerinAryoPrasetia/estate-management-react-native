@@ -205,7 +205,10 @@ function NewsStackScreen() {
       <NewsStack.Screen
         name="News Page"
         component={News}
-        options={{headerShown: false}}
+        options={{
+          title: 'Berita Hari Ini',
+          headerStyle: {backgroundColor: '#fff'},
+        }}
       />
     </NewsStack.Navigator>
   );

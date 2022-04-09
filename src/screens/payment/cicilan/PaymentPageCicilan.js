@@ -22,7 +22,7 @@ const PaymentPageCicilan = ({route, navigation}) => {
   const [amount, setAmount] = useState('');
   const [chooseData, setChooseData] = useState('Select Bank...');
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const [selectedBank, setSelectedBank] = useState('');
+  const [selectedBank, setSelectedBank] = useState('bni');
   const OPTIONS = [
     {text: 'BNI VA', value: 'bni'},
     {text: 'BCA VA', value: 'bca'},
@@ -33,7 +33,7 @@ const PaymentPageCicilan = ({route, navigation}) => {
   useEffect(() => {
     const getData = async () => {
       try {
-        const value = await AsyncStorage.getItem('@storage_Key');
+        const value = await AsyncStorage.getItem('@storage_bearer');
         // console.log('masuk getData');
         if (value !== null) {
           // value previously stored
@@ -76,6 +76,7 @@ const PaymentPageCicilan = ({route, navigation}) => {
           navigation.navigate('InvoiceCicilan', {
             numberVa: responseJson.va_numbers[0].va_number,
             amount: responseJson.gross_amount,
+            bank: selectedBank,
           });
           console.log('Navigate');
         }
@@ -83,6 +84,7 @@ const PaymentPageCicilan = ({route, navigation}) => {
           navigation.navigate('InvoiceCicilan', {
             numberVa: responseJson.merchant_id,
             amount: responseJson.gross_amount,
+            bank: selectedBank,
           });
           console.log('Navigate');
         }

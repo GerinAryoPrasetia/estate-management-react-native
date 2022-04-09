@@ -120,7 +120,7 @@ const Home = ({route, navigation}) => {
       {/* Modal */}
       <Modal
         animationType="slide"
-        transparent={true}
+        transparent={false}
         visible={modalVisible}
         onRequestClose={() => {
           Alert.alert('Modal has been closed.');

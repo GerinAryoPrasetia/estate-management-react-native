@@ -10,21 +10,21 @@ import {
 import ImgBayar from '../../../../assets/img/bayar.png';
 
 const InvoiceCicilan = ({route, navigation}) => {
-  const {numberVa, amount} = route.params;
-
+  const {numberVa, amount, bank} = route.params;
+  const bankUpper = bank.toUpperCase();
   return (
     <View style={styles.container}>
       <SafeAreaView />
       <View style={styles.header}>
         <View>
-          <Text style={styles.greetingText}>Bayar Listrik</Text>
+          <Text style={styles.greetingText}>Bayar Cicilan</Text>
         </View>
         <Image source={ImgBayar} />
       </View>
       <View style={styles.content}>
         <Text style={styles.title}>Detail Pembayaran Anda</Text>
         <Text style={(styles.title, styles.subTitle)}>
-          Nomor Virtual Account
+          Nomor Virtual Account <Text style={styles.span}>{bankUpper}</Text>
         </Text>
         <View style={styles.idData}>
           <Text style={styles.detail}>{numberVa}</Text>
@@ -88,7 +88,6 @@ const styles = StyleSheet.create({
   detail: {
     color: 'black',
     fontSize: 16,
-    marginBottom: 10,
   },
   priceContainer: {
     paddingTop: 20,
@@ -138,5 +137,9 @@ const styles = StyleSheet.create({
   },
   text: {
     color: 'white',
+  },
+  span: {
+    color: 'black',
+    fontWeight: 'bold',
   },
 });

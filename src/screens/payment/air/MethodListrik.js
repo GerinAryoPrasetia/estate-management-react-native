@@ -35,7 +35,7 @@ const MethodListrik = ({route, navigation}) => {
   useEffect(() => {
     const getToken = async () => {
       try {
-        const value = await AsyncStorage.getItem('@storage_Key');
+        const value = await AsyncStorage.getItem('@storage_bearer');
         if (value !== null) {
           // value previously stored
           setBearer(value);

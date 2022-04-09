@@ -23,8 +23,10 @@ const PaymentPageAir = ({route, navigation}) => {
   const [amount, setAmount] = useState('');
   const [chooseData, setChooseData] = useState('Select Bank...');
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const [selectedBank, setSelectedBank] = useState('');
+  const [selectedBank, setSelectedBank] = useState('bni');
   const [isLoading, setIsLoading] = useState(false);
+  const [jsonData, setJsonData] = useState({});
+
   const bank = [
     {text: 'BNI VA', value: 'bni'},
     {text: 'BCA VA', value: 'bca'},
@@ -34,7 +36,7 @@ const PaymentPageAir = ({route, navigation}) => {
   useEffect(() => {
     const getData = async () => {
       try {
-        const value = await AsyncStorage.getItem('@storage_Key');
+        const value = await AsyncStorage.getItem('@storage_bearer');
         // console.log('masuk getData');
         if (value !== null) {
           // value previously stored
@@ -47,51 +49,49 @@ const PaymentPageAir = ({route, navigation}) => {
       }
     };
     getData();
-  }, []);
+  }, [bearer]);
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
+    // navigation.navigate('InvoiceAir');
     setIsLoading(true);
-    const postData = async () => {
-      try {
-        const response = await fetch(
-          'https://estate.royalsaranateknologi.com/api/postpaid/payment-va',
-          {
-            method: 'POST',
-            headers: {
-              Authorization: `Bearer ${bearer}`,
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-              ref_id: refId,
-              bank: selectedBank,
-            }),
+    try {
+      // const value = await AsyncStorage.getItem('@storage_Key');
+      const response = await fetch(
+        'https://estate.royalsaranateknologi.com/api/postpaid/payment-va',
+        {
+          method: 'POST',
+          headers: {
+            Authorization: `Bearer ${bearer}`,
+            'Content-Type': 'application/json',
           },
-        );
-        const responseJson = await response.json();
-        console.log(responseJson);
-        // setNumberVa();
-        if (responseJson.status_code === '201') {
-          setIsLoading(false);
-          navigation.navigate('InvoiceAir', {
-            numberVa: responseJson.va_numbers[0].va_number,
-            amount: responseJson.gross_amount,
-          });
-          console.log('Navigate');
-        }
-      } catch (e) {
-        console.log('error bayar pdam', e);
+          body: JSON.stringify({
+            ref_id: refId,
+            bank: selectedBank,
+          }),
+        },
+      );
+      const responseJson = await response.json();
+      // console.log(responseJson);
+      if (responseJson.status_code === '201') {
+        setIsLoading(false);
+        navigation.navigate('InvoiceAir', {
+          numberVa: responseJson.va_numbers[0].va_number,
+          amount: responseJson.gross_amount,
+          bank: selectedBank,
+        });
       }
-    };
-    postData();
+    } catch (e) {
+      console.log('error bayar pdam', e);
+    }
   };
   console.log(selectedBank);
   return (
-    <View style={styles.container}>
-      <ScrollView>
+    <ScrollView>
+      <View style={styles.container}>
         <SafeAreaView />
         <View style={styles.header}>
           <View>
-            <Text style={styles.greetingText}>Bayar Listrik</Text>
+            <Text style={styles.greetingText}>Bayar Air</Text>
           </View>
           <Image source={ImgBayar} />
         </View>
@@ -138,8 +138,8 @@ const PaymentPageAir = ({route, navigation}) => {
             )}
           </TouchableOpacity>
         </View>
-      </ScrollView>
-    </View>
+      </View>
+    </ScrollView>
   );
 };
 

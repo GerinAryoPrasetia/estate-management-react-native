@@ -31,36 +31,6 @@ const BayarAir = ({navigation}) => {
   const [isInvalid, setIsInvalid] = useState(false);
 
   useEffect(() => {
-    // const getData = async () => {
-    //   try {
-    //     const value = await AsyncStorage.getItem('@storage_bearer');
-    //     // console.log('masuk getData');
-    //     if (value !== null || value !== undefined) {
-    //       // value previously stored
-    //       console.log('sync storage pdam', value);
-    //       setBearer(value);
-    //     }
-    //   } catch (e) {
-    //     // error reading value
-    //     console.log(e);
-    //   }
-    // };
-    // const getDataId = async () => {
-    //   try {
-    //     const id = await AsyncStorage.getItem('@user_id');
-    //     if (id !== null) {
-    //       // value previously stored
-    //       console.log('sync storage komplain userid', id);
-    //       setUserId(id);
-    //     }
-    //   } catch (e) {
-    //     console.log(e);
-    //   }
-    // };
-
-    // getData();
-    // getDataId();
-    // fetchData();
     const fetchData = async () => {
       try {
         const token = await AsyncStorage.getItem('@storage_bearer');
@@ -120,27 +90,20 @@ const BayarAir = ({navigation}) => {
         );
         const json = await response.json();
         console.log('Response POST air', json);
-        const refIdSet = await setRefId(json.ref_id);
+
         if (json.message === 'INQUIRY SUCCESS') {
-          if (refIdSet !== '') {
-            navigation.navigate('PaymentAir', {
-              name: json.tr_name,
-              pdam: json.desc.pdam_name,
-              refId: json.ref_id,
-              price: json.price,
-            });
-            console.log('Navigate');
-            setIsLoading(false);
-          }
+          navigation.navigate('PaymentAir', {
+            name: json.tr_name,
+            pdam: json.desc.pdam_name,
+            refId: json.ref_id,
+            price: json.price,
+          });
+          console.log('Navigate');
+          setIsLoading(false);
         } else {
           setIsInvalid(true);
           setIsLoading(false);
         }
-
-        // const results = json.map(pd => ({value: pd.code, text: pd.name}));
-        // console.log('RESULTS', results);
-
-        // console.log('PDAM', pdam);
       } catch (error) {
         console.log('error POST AIR', error);
       }

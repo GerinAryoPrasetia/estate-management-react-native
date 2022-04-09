@@ -75,6 +75,7 @@ const BayarListrik = ({navigation}) => {
             idPelanggan: idPelanggan,
             name: responseJson.data.tr_name,
             refId: responseJson.data.ref_id,
+            price: responseJson.data.price,
           });
           setIsloading(false);
         } else {

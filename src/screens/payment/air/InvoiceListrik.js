@@ -9,8 +9,8 @@ import {
 } from 'react-native';
 import ImgBayar from '../../../../assets/img/bayar.png';
 const InvoiceListrik = ({route, navigation}) => {
-  const {numberVa, price} = route.params;
-
+  const {numberVa, amount, bank} = route.params;
+  const bankUpper = bank.toUpperCase();
   return (
     <View style={styles.container}>
       <SafeAreaView />
@@ -22,15 +22,15 @@ const InvoiceListrik = ({route, navigation}) => {
       </View>
       <View style={styles.content}>
         <Text style={styles.title}>Detail Pembayaran Anda</Text>
-        <Text style={(styles.title, styles.subTitle)}>
-          Nomor Virtual Account
+        <Text style={styles.subTitle}>
+          Nomor <Text style={styles.span}>{bankUpper}</Text>
         </Text>
         <View style={styles.idData}>
           <Text style={styles.detail}>{numberVa}</Text>
         </View>
-        <Text style={(styles.title, styles.subTitle)}>Total Biaya</Text>
+        <Text style={styles.subTitle}>Total Biaya</Text>
         <View style={styles.idData}>
-          <Text style={styles.detail}>Rp {price}</Text>
+          <Text style={styles.detail}>Rp {amount}</Text>
         </View>
         <Pressable
           style={styles.reqBtn}
@@ -135,5 +135,9 @@ const styles = StyleSheet.create({
   },
   text: {
     color: 'white',
+  },
+  span: {
+    color: 'black',
+    fontWeight: 'bold',
   },
 });
