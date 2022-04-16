@@ -8,6 +8,7 @@ import {
   Image,
   ScrollView,
   Modal,
+  ActivityIndicator,
 } from 'react-native';
 import ImgBayar from '../../../../assets/img/bayar.png';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -18,6 +19,7 @@ const PaymentPageCicilan = ({route, navigation}) => {
   const {name, product, refId, price, desc} = route.params;
   const [refIdMethod, setRefIdMethod] = useState('');
   const [bearer, setBearer] = useState('');
+  const [isLoading, setIsLoading] = useState();
   const [numberVa, setNumberVa] = useState('');
   const [amount, setAmount] = useState('');
   const [chooseData, setChooseData] = useState('Select Bank...');
@@ -49,6 +51,7 @@ const PaymentPageCicilan = ({route, navigation}) => {
   }, []);
 
   const handleSubmit = () => {
+    setIsLoading(true);
     const postData = async () => {
       try {
         const response = await fetch(
@@ -78,7 +81,7 @@ const PaymentPageCicilan = ({route, navigation}) => {
             amount: responseJson.gross_amount,
             bank: selectedBank,
           });
-          console.log('Navigate');
+          setIsLoading(false);
         }
         if (responseJson.status_code === '201' && selectedBank === 'mandiri') {
           navigation.navigate('InvoiceCicilan', {
@@ -139,7 +142,11 @@ const PaymentPageCicilan = ({route, navigation}) => {
               })}
           </Picker>
           <TouchableOpacity style={styles.reqBtn} onPress={handleSubmit}>
-            <Text style={{color: 'white'}}>Bayar</Text>
+            {isLoading ? (
+              <ActivityIndicator color={'white'} />
+            ) : (
+              <Text style={{color: 'white'}}>Bayar</Text>
+            )}
           </TouchableOpacity>
         </View>
       </View>

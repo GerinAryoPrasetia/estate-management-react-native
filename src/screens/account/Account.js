@@ -15,11 +15,16 @@ import {
 } from 'react-native';
 
 const Account = ({navigation}) => {
-  const [modalVisible, setModalVisible] = useState(false);
+  const [modalNameVisible, setModalNameVisible] = useState(false);
+  const [modalUnitVisible, setModalUnitVisible] = useState(false);
+  const [modalAddressVisible, setModalAddressVisible] = useState(false);
   const [bearer, setBearer] = useState('');
   const [name, setName] = useState('');
+  const [unit, setUnit] = useState('');
+  const [address, setAddress] = useState('');
   const [email, setEmail] = useState('');
   const [data, setData] = useState({});
+  const [isLoading, setIsLoading] = useState(false);
   // const [bearer, setBearer] = useState('');
 
   useEffect(() => {
@@ -68,26 +73,115 @@ const Account = ({navigation}) => {
       console.log(e);
     }
   };
+  const handleSubmit = () => {
+    setIsLoading(true);
+    const postData = async () => {
+      try {
+        const response = await fetch(
+          'https://estate.royalsaranateknologi.com/api/postpaid/payment-va',
+          {
+            method: 'POST',
+            headers: {
+              Authorization: `Bearer ${bearer}`,
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({}),
+          },
+        );
+        const responseJson = await response.json();
+        console.log(responseJson);
+      } catch (e) {
+        console.log('error account edit', e);
+      }
+    };
+    postData();
+  };
+  const handleChangeUnit = e => {
+    setUnit(e);
+  };
+  const handleUpdateUnit = () => {
+    setModalUnitVisible(!modalUnitVisible);
+    setUnit(unit);
+    console.log('unit');
+  };
   return (
     <View style={styles.container}>
       <SafeAreaView />
-      {/* modal */}
+      {/* modal name*/}
       <Modal
         animationType="slide"
         transparent={true}
-        visible={modalVisible}
+        visible={modalNameVisible}
         onRequestClose={() => {
           Alert.alert('Modal has been closed.');
-          setModalVisible(!modalVisible);
+          setModalNameVisible(!modalNameVisible);
         }}>
         <View style={styles.centeredView}>
           <View style={styles.modalView}>
             <Text style={styles.modalText}>Edit Data</Text>
-            <Text>Masukkan Data Baru DIbawah Ini</Text>
+            <Text>Masukkan Data Nama Baru Dibawah Ini</Text>
+            <TextInput
+              style={styles.inputView}
+              onChangeText={handleChangeUnit}
+            />
+            <Pressable
+              style={[styles.button, styles.buttonClose]}
+              onPress={handleUpdateUnit}>
+              <Text style={styles.textStyle}>Simpan</Text>
+            </Pressable>
+          </View>
+        </View>
+      </Modal>
+      {/* modal unit*/}
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={modalUnitVisible}
+        onRequestClose={() => {
+          Alert.alert('Modal has been closed.');
+          setModalUnitVisible(!modalUnitVisible);
+        }}>
+        <View style={styles.centeredView}>
+          <View style={styles.modalView}>
+            <Text style={styles.modalText}>Edit Data</Text>
+            <Text>Masukkan Data Unit Dibawah Ini</Text>
             <TextInput style={styles.inputView} />
             <Pressable
               style={[styles.button, styles.buttonClose]}
-              onPress={() => setModalVisible(!modalVisible)}>
+              onPress={() => {
+                setModalUnitVisible(!modalUnitVisible);
+                handleChangeUnit();
+              }}>
+              <Text style={styles.textStyle}>Simpan</Text>
+            </Pressable>
+            <Pressable
+              style={[styles.button, styles.buttonClose]}
+              onPress={() => {
+                setModalUnitVisible(!modalUnitVisible);
+                handleUpdateUnit();
+              }}>
+              <Text style={styles.textStyle}>Batal</Text>
+            </Pressable>
+          </View>
+        </View>
+      </Modal>
+      {/* modal address*/}
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={modalNameVisible}
+        onRequestClose={() => {
+          Alert.alert('Modal has been closed.');
+          setModalAddressVisible(!modalAddressVisible);
+        }}>
+        <View style={styles.centeredView}>
+          <View style={styles.modalView}>
+            <Text style={styles.modalText}>Edit Data</Text>
+            <Text>Masukkan Data Alamat Baru DIbawah Ini</Text>
+            <TextInput style={styles.inputView} />
+            <Pressable
+              style={[styles.button, styles.buttonClose]}
+              onPress={() => setModalAddressVisible(!modalAddressVisible)}>
               <Text style={styles.textStyle}>Simpan</Text>
             </Pressable>
           </View>
@@ -104,30 +198,30 @@ const Account = ({navigation}) => {
           <View style={styles.dataView}>
             <Text style={styles.text}>{name}</Text>
           </View>
-          <Pressable onPress={() => setModalVisible(true)}>
+          <Pressable onPress={() => setModalNameVisible(true)}>
             <Text style={styles.text}>Edit</Text>
           </Pressable>
         </View>
         <Text style={styles.dataTitle}>Unit</Text>
         <View style={styles.data}>
           <View style={styles.dataView}>
-            <Text style={styles.text}></Text>
+            <Text style={styles.text}>{unit}</Text>
           </View>
-          <Pressable onPress={() => setModalVisible(true)}>
+          <Pressable onPress={() => setModalUnitVisible(true)}>
             <Text style={styles.text}>Edit</Text>
           </Pressable>
         </View>
         <Text style={styles.dataTitle}>Alamat Lengkap</Text>
         <View style={styles.data}>
           <View style={styles.dataView}>
-            <Text style={styles.text}></Text>
+            <Text style={styles.text}>{address}</Text>
           </View>
-          <Pressable onPress={() => setModalVisible(true)}>
+          <Pressable onPress={() => setModalAddressVisible(true)}>
             <Text style={styles.text}>Edit</Text>
           </Pressable>
         </View>
         <View style={{alignItems: 'center'}}>
-          <Pressable style={styles.button}>
+          <Pressable style={styles.button} onPress={handleSubmit}>
             <Text style={{color: 'white'}}>Simpan</Text>
           </Pressable>
           <Pressable style={styles.buttonLogut} onPress={removeToken}>

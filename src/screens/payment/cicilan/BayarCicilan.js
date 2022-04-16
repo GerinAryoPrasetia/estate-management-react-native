@@ -150,12 +150,12 @@ const BayarCicilan = ({navigation}) => {
       <SafeAreaView />
       <View style={styles.header}>
         <View>
-          <Text style={styles.greetingText}>Bayar Air</Text>
+          <Text style={styles.greetingText}>Bayar Cicilan</Text>
         </View>
         <Image source={ImgBayar} />
       </View>
       <View style={styles.content}>
-        <Text style={styles.title}>Masukkan ID Pelanggan</Text>
+        <Text style={styles.title}>Masukkan Nomor Pelanggan</Text>
         <TextInput
           style={styles.inputView}
           value={idPelanggan}

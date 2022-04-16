@@ -23,7 +23,7 @@ const InvoiceListrik = ({route, navigation}) => {
       <View style={styles.content}>
         <Text style={styles.title}>Detail Pembayaran Anda</Text>
         <Text style={styles.subTitle}>
-          Nomor <Text style={styles.span}>{bankUpper}</Text>
+          Nomor VA<Text style={styles.span}>{bankUpper}</Text>
         </Text>
         <View style={styles.idData}>
           <Text style={styles.detail}>{numberVa}</Text>

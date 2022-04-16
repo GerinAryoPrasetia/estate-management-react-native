@@ -1,5 +1,13 @@
 import React, {useEffect, useState} from 'react';
-import {View, StyleSheet, Text, Pressable, TextInput} from 'react-native';
+import {
+  View,
+  StyleSheet,
+  Text,
+  Pressable,
+  TextInput,
+  TouchableOpacity,
+  ActivityIndicator,
+} from 'react-native';
 import {Platform} from 'react-native';
 import {PermissionsAndroid} from 'react-native';
 import AudioRecorderPlayer, {
@@ -12,6 +20,7 @@ import AudioRecorderPlayer, {
 import {Picker} from '@react-native-picker/picker';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import RNFetchBlob from 'rn-fetch-blob';
+import DocumentPicker from 'react-native-document-picker';
 
 const JUZ = [
   '1',
@@ -55,12 +64,16 @@ const Hafalan = () => {
   const [playTime, setPlayTime] = useState('00:00:00');
   const [duration, setDuration] = useState('00:00:00');
   const [userId, setUserId] = useState('');
-  const [selectedJuz, setSelectedJuz] = useState('');
-  const [selectedSurah, setSelectedSurah] = useState('');
+  const [selectedJuz, setSelectedJuz] = useState('1');
+  const [selectedSurah, setSelectedSurah] = useState('Al-Fatihah');
   const [selectedAyat, setSelectedAyat] = useState('');
   // const [juz, setJuz] = useState('');
   const [surah, setSurah] = useState([]);
   const [ayat, setAyat] = useState('');
+  const [singleFile, setSingleFile] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [data, setData] = useState({});
+  const [bearer, setBearer] = useState('');
 
   const audioRecorderPlayer = new AudioRecorderPlayer();
 
@@ -96,7 +109,6 @@ const Hafalan = () => {
   };
   useEffect(() => {
     grantsPermission();
-    audioRecorderPlayer.setSubscriptionDuration(0.09);
     const getDataId = async () => {
       try {
         const id = await AsyncStorage.getItem('@user_id');
@@ -121,63 +133,99 @@ const Hafalan = () => {
     // const getAyat = async () => {
     //   const response = await fetch(`https://api.quran.sutanlab.id/surah/${}`)
     // };
+    const getToken = async () => {
+      try {
+        const value = await AsyncStorage.getItem('@storage_bearer');
+        if (value !== null) {
+          // value previously stored
+          console.log('sync storage komplain bearer', value);
+          setBearer(value);
+        }
+      } catch (e) {
+        console.log(e);
+      }
+    };
     getSurah();
     setSelectedAyat();
     getDataId();
+    getToken();
     // console.log('SURAH', surah);
   }, [userId]);
 
-  const onStartRecord = async () => {
-    const dirs = RNFetchBlob.fs.dirs;
-    const path = Platform.select({
-      ios: 'hello.m4a',
-      android: `${dirs.CacheDir}/hello.mp3`,
-    });
+  const uploadImage = async () => {
+    // Check if any file is selected or not
+    setLoading(true);
 
-    // const uri = await audioRecorderPlayer.startRecord(path);
-    const audioSet = {
-      AudioEncoderAndroid: AudioEncoderAndroidType.AAC,
-      AudioSourceAndroid: AudioSourceAndroidType.MIC,
-      AVEncoderAudioQualityKeyIOS: AVEncoderAudioQualityIOSType.high,
-      AVNumberOfChannelsKeyIOS: 2,
-      AVFormatIDKeyIOS: AVEncodingOption.aac,
-    };
-    console.log('audioSet', audioSet);
-    const uri = await audioRecorderPlayer.startRecorder(path, audioSet);
-    audioRecorderPlayer.addRecordBackListener(e => {
-      const record_time = audioRecorderPlayer.mmssss(
-        Math.floor(e.currentPosition),
+    if (singleFile != null) {
+      // If file selected then create FormData
+      const fileToUpload = singleFile;
+      const fd = new FormData();
+      fd.append('user_id', userId);
+      fd.append('juz', selectedJuz);
+      fd.append('surat', selectedSurah);
+      fd.append('ayat', ayat);
+      fd.append('file', fileToUpload);
+      // Please change file upload URL
+
+      let res = await fetch(
+        'https://estate.royalsaranateknologi.com/api/hafalan',
+        {
+          method: 'POST',
+          body: fd,
+          headers: {
+            Authorization: `Bearer ${bearer}`,
+            'Content-Type': 'multipart/form-data',
+          },
+        },
       );
-      setRecordTime(record_time);
-      setrecordSecs(e.currentPosition);
-    });
-    console.log(`uri: ${uri}`);
-    console.log('URI', uri);
+      let responseJson = await res.json();
+      if (responseJson.status === 'sukses') {
+        alert('Hafalan Berhasil Dikirim');
+        setLoading(false);
+      }
+    } else {
+      // If no file selected the show alert
+      alert('Please Select File first');
+    }
   };
-  const onStopRecord = async () => {
-    const result = await audioRecorderPlayer.stopRecorder();
-    audioRecorderPlayer.removeRecordBackListener();
-    // const record_time = audioRecorderPlayer.mmssss(
-    //   Math.floor(e.currentPosition),
-    // );
-    setrecordSecs(0);
-    setRecordTime('00:00:00');
-    console.log(result);
+
+  const selectFile = async () => {
+    // Opening Document Picker to select one file
+    try {
+      const res = await DocumentPicker.pickSingle({
+        // Provide which type of file you want user to pick
+        type: [DocumentPicker.types.allFiles],
+        // There can me more options as well
+        // DocumentPicker.types.allFiles
+        // DocumentPicker.types.images
+        // DocumentPicker.types.plainText
+        // DocumentPicker.types.audio
+        // DocumentPicker.types.pdf
+      });
+      // Printing the log realted to the file
+      console.log('res : ' + JSON.stringify(res));
+      // Setting the state to show single file attributes
+      setSingleFile(res);
+    } catch (err) {
+      setSingleFile(null);
+      // Handling any exception (If any)
+      if (DocumentPicker.isCancel(err)) {
+        // If user canceled the document selection
+        alert('Canceled');
+      } else {
+        // For Unknown Error
+        alert('Unknown Error: ' + JSON.stringify(err));
+        throw err;
+      }
+    }
   };
+
   const onChangeAyat = e => {
     setAyat(e);
   };
   console.log(selectedJuz);
   return (
     <View style={styles.container}>
-      {/* <Text>Hafalan</Text>
-      <Pressable onPress={onStartRecord}>
-        <Text>Record</Text>
-      </Pressable>
-      <Text></Text>
-      <Pressable onPress={onStopRecord}>
-        <Text>STOP</Text>
-      </Pressable> */}
       <Text style={styles.text}>Pilih Juz</Text>
       <Picker
         selectedValue={selectedJuz}
@@ -214,13 +262,38 @@ const Hafalan = () => {
         value={ayat}
         onChangeText={onChangeAyat}
       />
-      <Pressable onPress={onStartRecord} style={styles.recordBtn}>
-        <Text style={{color: 'white'}}>Record</Text>
-      </Pressable>
-      <Text style={{color: 'black'}}>{recordTime}</Text>
-      <Pressable onPress={onStopRecord} style={styles.stopBtn}>
-        <Text style={{color: 'black'}}>Stop</Text>
-      </Pressable>
+      {/*Showing the data of selected Single file*/}
+      {singleFile != null ? (
+        <Text style={styles.textStyle}>
+          File Name: {singleFile.name ? singleFile.name : ''}
+          {'\n'}
+          Type: {singleFile.type ? singleFile.type : ''}
+          {'\n'}
+          File Size: {singleFile.size
+            ? Math.floor(singleFile.size / 1000)
+            : ''}{' '}
+          kb
+          {'\n'}
+          {/* URI: {singleFile.uri ? singleFile.uri : ''}
+          {'\n'} */}
+        </Text>
+      ) : null}
+      <TouchableOpacity
+        style={styles.registerBtn}
+        activeOpacity={0.5}
+        onPress={selectFile}>
+        <Text style={styles.buttonTextStyle}>Select File</Text>
+      </TouchableOpacity>
+      <TouchableOpacity
+        style={styles.registerBtn}
+        activeOpacity={0.5}
+        onPress={uploadImage}>
+        {loading ? (
+          <ActivityIndicator color={'white'} />
+        ) : (
+          <Text style={styles.buttonTextStyle}>Upload File</Text>
+        )}
+      </TouchableOpacity>
     </View>
   );
 };
@@ -276,5 +349,39 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     borderWidth: 1,
     borderColor: 'red',
+  },
+  buttonStyle: {
+    backgroundColor: '#307ecc',
+    borderWidth: 0,
+    color: '#FFFFFF',
+    borderColor: '#307ecc',
+    height: 40,
+    alignItems: 'center',
+    borderRadius: 30,
+    marginLeft: 35,
+    marginRight: 35,
+    marginTop: 15,
+  },
+  buttonTextStyle: {
+    color: '#FFFFFF',
+    paddingVertical: 10,
+    fontSize: 16,
+  },
+  textStyle: {
+    color: 'black',
+    fontSize: 15,
+    marginTop: 16,
+    marginLeft: 35,
+    marginRight: 35,
+    textAlign: 'center',
+  },
+  registerBtn: {
+    width: '80%',
+    borderRadius: 25,
+    height: 50,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#11998E',
+    marginBottom: 10,
   },
 });

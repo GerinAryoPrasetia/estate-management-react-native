@@ -9,6 +9,7 @@ import {
   Alert,
   Modal,
   Pressable,
+  ActivityIndicator,
 } from 'react-native';
 import {Col, Row, Grid} from 'react-native-easy-grid';
 import HomeImage from '../../../assets/img/imgHome.png';
@@ -30,21 +31,9 @@ const Home = ({route, navigation}) => {
   const [data, setData] = useState({});
   const [userId, setUserId] = useState('');
   const [name, setName] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
-    // const getData = async () => {
-    //   try {
-    //     const value = await AsyncStorage.getItem('@storage_Key');
-    //     console.log('masuk getData');
-    //     if (value !== null) {
-    //       // value previously stored
-    //       console.log('sync storage home', value);
-    //     }
-    //   } catch (e) {
-    //     // error reading value
-    //     console.log(e);
-    //   }
-    // };
     const getTokenLogin = async () => {
       try {
         const value = await AsyncStorage.getItem('@user_id');
@@ -103,11 +92,19 @@ const Home = ({route, navigation}) => {
   }, [bearer, data, userId]);
 
   const sendSos = () => {
+    setIsLoading(true);
     try {
-      fetch('https://estate.royalsaranateknologi.com/api/sos')
+      fetch('https://estate.royalsaranateknologi.com/api/sos', {
+        method: 'GET',
+        headers: {
+          Authorization: `Bearer ${bearer}`,
+          'Content-Type': 'application/json',
+        },
+      })
         .then(respnonse => respnonse.json())
         .then(data => {
           console.log(data);
+          setIsLoading(false);
         });
     } catch (e) {
       console.log(e);
@@ -133,7 +130,11 @@ const Home = ({route, navigation}) => {
             <Pressable
               style={[styles.button, styles.buttonSos]}
               onPress={sendSos}>
-              <Text style={styles.textStyle}>SOS</Text>
+              {isLoading ? (
+                <ActivityIndicator color={'white'} />
+              ) : (
+                <Text style={styles.textStyle}>SOS</Text>
+              )}
             </Pressable>
             <Pressable
               style={[styles.button, styles.buttonClose]}

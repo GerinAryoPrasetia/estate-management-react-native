@@ -26,6 +26,7 @@ import RiwayatComplain from './src/screens/complain/RiwayatComplain';
 import FormComplain from './src/screens/complain/FormComplain';
 import RiwayatAmbil from './src/screens/sampah/RiwayatAmbil';
 import AmbilSampah from './src/screens/sampah/AmbilSampah';
+import AudioExample from './src/screens/hafalan/Hafalan2';
 // import {initializeApp} from 'https://www.gstatic.com/firebasejs/9.6.7/firebase-app.js';
 // import {getAnalytics} from 'https://www.gstatic.com/firebasejs/9.6.7/firebase-analytics.js';
 
@@ -189,6 +190,14 @@ function HomeStackScreen() {
       <HomeStack.Screen
         name="Hafalan"
         component={Hafalan}
+        options={{
+          title: 'Setor Hafalan',
+          headerStyle: {backgroundColor: '#fff'},
+        }}
+      />
+      <HomeStack.Screen
+        name="Hafalan2"
+        component={AudioExample}
         options={{
           title: 'Setor Hafalan',
           headerStyle: {backgroundColor: '#fff'},
