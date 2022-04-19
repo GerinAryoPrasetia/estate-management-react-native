@@ -25,43 +25,48 @@ const Account = ({navigation}) => {
   const [email, setEmail] = useState('');
   const [data, setData] = useState({});
   const [isLoading, setIsLoading] = useState(false);
+  const [phone, setPhone] = useState('');
   // const [bearer, setBearer] = useState('');
 
   useEffect(() => {
-    const getToken = async () => {
-      try {
-        const value = await AsyncStorage.getItem('@storage_bearer');
-        if (value !== null) {
-          // value previously stored
-          console.log('sync storage HOMEPAGE', value);
-          setBearer(value);
+    const interval = setInterval(() => {
+      const getToken = async () => {
+        try {
+          const value = await AsyncStorage.getItem('@storage_bearer');
+          if (value !== null) {
+            // value previously stored
+            console.log('sync storage HOMEPAGE', value);
+            setBearer(value);
+          }
+        } catch (e) {
+          console.log(e);
         }
-      } catch (e) {
-        console.log(e);
-      }
-    };
-    const getUserData = async () => {
-      try {
-        const response = await fetch(
-          'https://estate.royalsaranateknologi.com/api/user',
-          {
-            headers: {
-              Authorization: `Bearer ${bearer}`,
-              'Content-Type': 'application/json',
+      };
+      const getUserData = async () => {
+        try {
+          const response = await fetch(
+            'https://estate.royalsaranateknologi.com/api/user',
+            {
+              headers: {
+                Authorization: `Bearer ${bearer}`,
+                'Content-Type': 'application/json',
+              },
             },
-          },
-        );
-        const responseJson = await response.json();
-        console.log('Home', responseJson);
-        if (responseJson.status === 'success') {
-          setName(responseJson.data.name);
+          );
+          const responseJson = await response.json();
+          if (responseJson.status === 'success') {
+            setName(responseJson.data.name);
+            setUnit(responseJson.data.alamat);
+            setPhone(responseJson.data.no_hp);
+          }
+        } catch (e) {
+          console.log('error home', e);
         }
-      } catch (e) {
-        console.log('error home', e);
-      }
-    };
-    getToken();
-    getUserData();
+      };
+      getToken();
+      getUserData();
+    }, 3000);
+    return () => clearInterval(interval);
   }, [bearer, data]);
   // console.log(data, 'data outside');
   // console.log(name);
@@ -74,27 +79,7 @@ const Account = ({navigation}) => {
     }
   };
   const handleSubmit = () => {
-    setIsLoading(true);
-    const postData = async () => {
-      try {
-        const response = await fetch(
-          'https://estate.royalsaranateknologi.com/api/postpaid/payment-va',
-          {
-            method: 'POST',
-            headers: {
-              Authorization: `Bearer ${bearer}`,
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({}),
-          },
-        );
-        const responseJson = await response.json();
-        console.log(responseJson);
-      } catch (e) {
-        console.log('error account edit', e);
-      }
-    };
-    postData();
+    navigation.navigate('EditProfile');
   };
   const handleChangeUnit = e => {
     setUnit(e);
@@ -198,31 +183,22 @@ const Account = ({navigation}) => {
           <View style={styles.dataView}>
             <Text style={styles.text}>{name}</Text>
           </View>
-          <Pressable onPress={() => setModalNameVisible(true)}>
-            <Text style={styles.text}>Edit</Text>
-          </Pressable>
         </View>
-        <Text style={styles.dataTitle}>Unit</Text>
+        <Text style={styles.dataTitle}>Alamat</Text>
         <View style={styles.data}>
           <View style={styles.dataView}>
             <Text style={styles.text}>{unit}</Text>
           </View>
-          <Pressable onPress={() => setModalUnitVisible(true)}>
-            <Text style={styles.text}>Edit</Text>
-          </Pressable>
         </View>
-        <Text style={styles.dataTitle}>Alamat Lengkap</Text>
+        <Text style={styles.dataTitle}>Nomor Handphone</Text>
         <View style={styles.data}>
           <View style={styles.dataView}>
-            <Text style={styles.text}>{address}</Text>
+            <Text style={styles.text}>{phone}</Text>
           </View>
-          <Pressable onPress={() => setModalAddressVisible(true)}>
-            <Text style={styles.text}>Edit</Text>
-          </Pressable>
         </View>
         <View style={{alignItems: 'center'}}>
           <Pressable style={styles.button} onPress={handleSubmit}>
-            <Text style={{color: 'white'}}>Simpan</Text>
+            <Text style={{color: 'white'}}>Edit Profile</Text>
           </Pressable>
           <Pressable style={styles.buttonLogut} onPress={removeToken}>
             <Text style={{color: 'black'}}>Logout</Text>
