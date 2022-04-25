@@ -84,7 +84,7 @@ const PaymentPageCicilan = ({route, navigation}) => {
           setIsLoading(false);
         }
         if (responseJson.status_code === '201' && selectedBank === 'mandiri') {
-          navigation.navigate('InvoiceCicilan', {
+          navigation.navigate('InvoiceCicilan', { 
             numberVa: responseJson.merchant_id,
             amount: responseJson.gross_amount,
             bank: selectedBank,

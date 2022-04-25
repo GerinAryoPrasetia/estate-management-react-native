@@ -72,13 +72,26 @@ const PaymentPageListrik = ({route, navigation}) => {
       );
       const responseJson = await response.json();
       // console.log(responseJson);
-      if (responseJson.status_code === '201') {
+      if (
+        responseJson.status_code === '201' &&
+        (selectedBank === 'bni' ||
+          selectedBank === 'bca' ||
+          selectedBank === 'bri')
+      ) {
         setIsLoading(false);
         navigation.navigate('InvoiceListrik', {
           numberVa: responseJson.va_numbers[0].va_number,
           amount: responseJson.gross_amount,
           bank: selectedBank,
         });
+      }
+      if (responseJson.status_code === '201' && selectedBank === 'mandiri') {
+        navigation.navigate('InvoiceAir', {
+          numberVa: responseJson.merchant_id,
+          amount: responseJson.gross_amount,
+          bank: selectedBank,
+        });
+        console.log('Navigate');
       }
     } catch (e) {
       console.log('error bayar listrik', e);

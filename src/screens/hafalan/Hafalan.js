@@ -21,6 +21,7 @@ import {Picker} from '@react-native-picker/picker';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import RNFetchBlob from 'rn-fetch-blob';
 import DocumentPicker from 'react-native-document-picker';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 
 const JUZ = [
   '1',
@@ -57,12 +58,8 @@ const JUZ = [
 
 const Hafalan = () => {
   const [isLoggingIn, setIsLoggingIn] = useState(false);
-  const [recordSecs, setrecordSecs] = useState(0);
-  const [recordTime, setRecordTime] = useState('00:00:00');
   const [currentPositionSec, setCurrentPositionSec] = useState(0);
   const [currentDurationSec, setcurrentDurationSec] = useState(0);
-  const [playTime, setPlayTime] = useState('00:00:00');
-  const [duration, setDuration] = useState('00:00:00');
   const [userId, setUserId] = useState('');
   const [selectedJuz, setSelectedJuz] = useState('1');
   const [selectedSurah, setSelectedSurah] = useState('Al-Fatihah');
@@ -180,7 +177,7 @@ const Hafalan = () => {
       );
       let responseJson = await res.json();
       if (responseJson.status === 'sukses') {
-        alert('Hafalan Berhasil Dikirim');
+        alert('Hafalan Berhasil Dikirim!');
         setLoading(false);
       }
     } else {
@@ -261,12 +258,25 @@ const Hafalan = () => {
         style={styles.inputView}
         value={ayat}
         onChangeText={onChangeAyat}
+        placeholder="Masukkan Ayat"
       />
+      <Text style={styles.text}>Upload Rekaman Hafalan</Text>
+      <Pressable onPress={selectFile}>
+        <View style={styles.passwordContainer}>
+          {singleFile != null ? (
+            <Text style={{color: "black"}}>{singleFile.name ? singleFile.name : ''}</Text>
+          ) : (
+            <Text style={{color: "grey"}}>Pilih File</Text>
+          )}
+          <Text style={styles.inputStyle}></Text>
+          <Ionicons name={'cloud-upload'} size={17} color={'#000'} />
+        </View>
+      </Pressable>
+      <Text style={{color: "grey"}}>*Pilih file rekaman hafalan</Text>
+      <Text style={{color: "grey"}}>yang sudah dibuat sebelumnya</Text>
       {/*Showing the data of selected Single file*/}
       {singleFile != null ? (
         <Text style={styles.textStyle}>
-          File Name: {singleFile.name ? singleFile.name : ''}
-          {'\n'}
           Type: {singleFile.type ? singleFile.type : ''}
           {'\n'}
           File Size: {singleFile.size
@@ -281,17 +291,11 @@ const Hafalan = () => {
       <TouchableOpacity
         style={styles.registerBtn}
         activeOpacity={0.5}
-        onPress={selectFile}>
-        <Text style={styles.buttonTextStyle}>Select File</Text>
-      </TouchableOpacity>
-      <TouchableOpacity
-        style={styles.registerBtn}
-        activeOpacity={0.5}
         onPress={uploadImage}>
         {loading ? (
           <ActivityIndicator color={'white'} />
         ) : (
-          <Text style={styles.buttonTextStyle}>Upload File</Text>
+          <Text style={styles.buttonTextStyle}>Kirim Hafalan</Text>
         )}
       </TouchableOpacity>
     </View>
@@ -383,5 +387,22 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     backgroundColor: '#11998E',
     marginBottom: 10,
+  },
+  passwordContainer: {
+    flexDirection: 'row',
+    borderBottomWidth: 1,
+    borderColor: '#000',
+    backgroundColor: 'white',
+    borderWidth: 1,
+    borderColor: 'grey',
+    width: '80%',
+    padding: 15,
+    borderRadius: 10,
+    marginTop: 20,
+    color: 'black',
+  },
+  inputStyle: {
+    flex: 1,
+    alignItems: 'center',
   },
 });
