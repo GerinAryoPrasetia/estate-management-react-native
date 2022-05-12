@@ -86,7 +86,7 @@ const PaymentPageListrik = ({route, navigation}) => {
         });
       }
       if (responseJson.status_code === '201' && selectedBank === 'mandiri') {
-        navigation.navigate('InvoiceAir', {
+        navigation.navigate('InvoiceListrik', {
           numberVa: responseJson.merchant_id,
           amount: responseJson.gross_amount,
           bank: selectedBank,
