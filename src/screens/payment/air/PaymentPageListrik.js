@@ -109,10 +109,6 @@ const PaymentPageListrik = ({route, navigation}) => {
           <Image source={ImgBayar} />
         </View>
         <View style={styles.content}>
-          {/* <Text>ID Pelanggan Anda</Text>
-        <View style={styles.idData}>
-          <Text>{idPelanggan}</Text>
-        </View> */}
           <Text style={styles.title}>Nama Pelanggan</Text>
           <View style={styles.idData}>
             <Text style={styles.text}>{name}</Text>

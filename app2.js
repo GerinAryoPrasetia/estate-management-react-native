@@ -28,6 +28,7 @@ import RiwayatAmbil from './src/screens/sampah/RiwayatAmbil';
 import AmbilSampah from './src/screens/sampah/AmbilSampah';
 import AudioExample from './src/screens/hafalan/Hafalan2';
 import EditProfile from './src/screens/account/EditProfile';
+import History from './src/screens/history/History';
 // import {initializeApp} from 'https://www.gstatic.com/firebasejs/9.6.7/firebase-app.js';
 // import {getAnalytics} from 'https://www.gstatic.com/firebasejs/9.6.7/firebase-analytics.js';
 
@@ -232,6 +233,22 @@ function NewsStackScreen() {
   );
 }
 
+const HistoryStack = createNativeStackNavigator();
+function HistoryStackScreen() {
+  return (
+    <HistoryStack.Navigator>
+      <HistoryStack.Screen
+        name="History Page"
+        component={History}
+        options={{
+          title: 'History',
+          headerStyle: {backgroundColor: '#FFF'},
+        }}
+      />
+    </HistoryStack.Navigator>
+  );
+}
+
 function MainStack() {
   return (
     <Tab.Navigator
@@ -246,6 +263,8 @@ function MainStack() {
             iconName = focused ? 'person-outline' : 'person-outline';
           } else if (route.name === 'News') {
             iconName = focused ? 'newspaper-outline' : 'newspaper-outline';
+          } else if (route.name === 'History') {
+            iconName = focused ? 'repeat' : 'repeat';
           }
           // You can return any component that you like here!
           return <Ionicons name={iconName} size={size} color={color} />;
@@ -266,6 +285,11 @@ function MainStack() {
       <Tab.Screen
         name="News"
         component={NewsStackScreen}
+        options={{headerShown: false}}
+      />
+      <Tab.Screen
+        name="History"
+        component={HistoryStackScreen}
         options={{headerShown: false}}
       />
     </Tab.Navigator>
