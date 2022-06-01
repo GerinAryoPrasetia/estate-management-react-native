@@ -1,9 +1,17 @@
 import React, {useEffect, useState} from 'react';
-import {View, Text, SafeAreaView, StyleSheet, ScrollView} from 'react-native';
+import {
+  View,
+  Text,
+  SafeAreaView,
+  StyleSheet,
+  ScrollView,
+  Pressable,
+} from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import HTMLView from 'react-native-htmlview';
+import NewsDetail from './NewsDetail';
 
-const News = () => {
+const News = ({route, navigation}) => {
   const [news, setNews] = useState([]);
   const [bearer, setBearer] = useState('');
   const [detail, setDetail] = useState([]);
@@ -66,13 +74,19 @@ const News = () => {
         {detail.length === 0 ? (
           <Text style={styles.title}>Belum Ada Berita Terbaru Hari Ini</Text>
         ) : (
-          news.data?.map((n, idx) => {
+          news.data?.map((data, idx) => {
             return (
-              <View key={idx}>
-                <Text style={styles.newsTitle} key={n.id}>
+              <View key={idx} style={styles.card}>
+                <Pressable
+                  onPress={() =>
+                    navigation.navigate('NewsDetail', {data: data})
+                  }>
+                  <Text style={styles.newsTitle}>{data.judul_berita}</Text>
+                </Pressable>
+                {/* <Text style={styles.newsTitle} key={n.id}>
                   {n.judul_berita}
                 </Text>
-                {/* <HTMLView value={n.konten_berita} stylesheet={styles} /> */}
+
                 <Text style={styles.detail}>{n.konten_berita}</Text>
                 <View
                   style={{
@@ -80,7 +94,7 @@ const News = () => {
                     borderBottomColor: 'black',
                     borderBottomWidth: 1,
                   }}
-                />
+                /> */}
               </View>
             );
           })
@@ -97,6 +111,86 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 10,
   },
+  containerLoading: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  horizontal: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    padding: 10,
+  },
+  card: {
+    backgroundColor: 'white',
+    paddingVertical: 20,
+    paddingHorizontal: 25,
+    width: '100%',
+    marginTop: 20,
+  },
+  cardHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginBottom: 10,
+  },
+  cardFooter: {
+    marginVertical: 0,
+    backgroundColor: 'white',
+    paddingVertical: 20,
+    paddingHorizontal: 25,
+    width: '100%',
+  },
+  cardContent: {
+    backgroundColor: 'white',
+    paddingVertical: 20,
+    paddingHorizontal: 25,
+  },
+  shadowProp: {
+    shadowColor: '#171717',
+    shadowOffset: {width: -2, height: 4},
+    shadowOpacity: 0.2,
+    shadowRadius: 3,
+  },
+  text: {
+    color: 'black',
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+  textBtn: {
+    color: 'black',
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+  textStatus: {
+    color: 'green',
+    fontSize: 12,
+  },
+  textStatusFailed: {
+    color: 'red',
+    fontSize: 12,
+  },
+  footerText: {
+    textAlign: 'center',
+    color: 'blue',
+    textDecorationLine: 'underline',
+  },
+  contentText: {
+    color: 'black',
+    fontSize: 14,
+  },
+  btn: {
+    width: '80%',
+    borderRadius: 25,
+    height: 50,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: 'green',
+    marginBottom: 10,
+  },
+  container: {
+    flex: 1,
+    padding: 10,
+  },
   title: {
     fontWeight: 'bold',
     color: 'black',
@@ -105,8 +199,7 @@ const styles = StyleSheet.create({
   newsTitle: {
     fontWeight: 'bold',
     color: 'black',
-    fontSize: 20,
-    marginBottom: 10,
+    fontSize: 16,
   },
   detail: {
     color: '#000',

@@ -50,8 +50,8 @@ const HistoryPembayaran = () => {
     return (
       <View style={[styles.card]}>
         <View style={styles.cardHeader}>
-          <Text style={styles.text}>PDAM</Text>
-          <Text style={styles.textStatus}>Sukses</Text>
+          <Text style={styles.text}>{section.code}</Text>
+          <Text style={styles.textStatus}>{section.message}</Text>
         </View>
         <Text>{section.name}</Text>
       </View>
@@ -65,9 +65,20 @@ const HistoryPembayaran = () => {
     );
   };
   const _renderContent = section => {
+    const paymentUpper = section.payment_method.toUpperCase();
     return (
       <View style={styles.cardContent}>
-        <Text>CONTENT</Text>
+        <Text style={styles.contentText}>Nama Pelanggan : {section.name}</Text>
+        <Text style={styles.contentText}>
+          Metode Pembayaran : {paymentUpper}
+        </Text>
+        <Text style={styles.contentText}>
+          ID Pelanggan : {section.id_pelanggan}
+        </Text>
+        <Text style={styles.contentText}>Total Biaya : Rp {section.total}</Text>
+        <Text style={styles.contentText}>
+          Status Pembayaran : {section.message}
+        </Text>
       </View>
     );
   };
@@ -86,10 +97,12 @@ const HistoryPembayaran = () => {
 
   if (empty) {
     return (
-      <View>
-        <Text>Tidak Ada Riwayat Transaksi</Text>
-        <TouchableOpacity onPress={() => getHistoryPembayaran()}>
-          <Text>Reload</Text>
+      <View style={styles.containerLoading}>
+        <Text style={styles.text}>Tidak Ada Riwayat Transaksi</Text>
+        <TouchableOpacity
+          onPress={() => getHistoryPembayaran()}
+          style={styles.btn}>
+          <Text style={{color: 'white'}}>Reload</Text>
         </TouchableOpacity>
       </View>
     );
@@ -116,6 +129,11 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 10,
+  },
+  containerLoading: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   horizontal: {
     flexDirection: 'row',
@@ -165,12 +183,29 @@ const styles = StyleSheet.create({
   },
   textStatus: {
     color: 'green',
-    fontSize: 14,
+    fontSize: 12,
+  },
+  textStatusFailed: {
+    color: 'red',
+    fontSize: 12,
   },
   footerText: {
     textAlign: 'center',
     color: 'blue',
     textDecorationLine: 'underline',
+  },
+  contentText: {
+    color: 'black',
+    fontSize: 14,
+  },
+  btn: {
+    width: '80%',
+    borderRadius: 25,
+    height: 50,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: 'green',
+    marginBottom: 10,
   },
 });
 

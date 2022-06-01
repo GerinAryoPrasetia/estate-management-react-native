@@ -29,6 +29,7 @@ import AmbilSampah from './src/screens/sampah/AmbilSampah';
 import AudioExample from './src/screens/hafalan/Hafalan2';
 import EditProfile from './src/screens/account/EditProfile';
 import History from './src/screens/history/History';
+import NewsDetail from './src/screens/news/NewsDetail';
 // import {initializeApp} from 'https://www.gstatic.com/firebasejs/9.6.7/firebase-app.js';
 // import {getAnalytics} from 'https://www.gstatic.com/firebasejs/9.6.7/firebase-analytics.js';
 
@@ -224,6 +225,14 @@ function NewsStackScreen() {
       <NewsStack.Screen
         name="News Page"
         component={News}
+        options={{
+          title: 'Berita Hari Ini',
+          headerStyle: {backgroundColor: '#fff'},
+        }}
+      />
+      <NewsStack.Screen
+        name="NewsDetail"
+        component={NewsDetail}
         options={{
           title: 'Berita Hari Ini',
           headerStyle: {backgroundColor: '#fff'},
